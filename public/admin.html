@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eddy's Sushi – Keuken Dashboard</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: #161616;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #E63946;
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #E63946; }
+    .logo span { color: #fff; }
+    .header-badge {
+      background: #E63946;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 62px);
+    }
+
+    /* Sidebar: nieuwe bestelling */
+    .sidebar {
+      background: #111;
+      border-right: 1px solid #222;
+      padding: 24px 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar-titel {
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+    }
+
+    /* Formulier */
+    .form-groep { margin-bottom: 16px; }
+    .form-label { font-size: 12px; color: #888; margin-bottom: 6px; display: block; font-weight: 600; }
+    .form-input, .form-select {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus { border-color: #E63946; }
+    .form-input::placeholder { color: #555; }
+
+    .btn-aanmaken {
+      width: 100%;
+      background: #E63946;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+    .btn-aanmaken:hover { background: #c0392b; }
+    .btn-aanmaken:active { transform: scale(0.98); }
+
+    /* Tracking link resultaat */
+    .link-resultaat {
+      background: #1a2a1a;
+      border: 1px solid #27ae60;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .link-resultaat.show { display: block; }
+    .link-resultaat-label { font-size: 11px; color: #27ae60; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .link-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #111;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .link-url {
+      flex: 1;
+      font-size: 13px;
+      color: #aaa;
+      word-break: break-all;
+      font-family: monospace;
+    }
+    .btn-kopieer {
+      background: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .btn-kopieer:hover { background: #1e8449; }
+    .btn-kopieer.gekopieerd { background: #1abc9c; }
+
+    /* Scheidingslijn */
+    .scheiding {
+      border: none;
+      border-top: 1px solid #222;
+      margin: 24px 0;
+    }
+
+    /* Actieve bestellingen */
+    .hoofd { padding: 24px; overflow-y: auto; }
+    .hoofd-titel {
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .teller {
+      background: #E63946;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* Geen bestellingen */
+    .leeg {
+      text-align: center;
+      padding: 60px 20px;
+      color: #444;
+    }
+    .leeg .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
+    .leeg p { font-size: 14px; }
+
+    /* Bestelling kaart */
+    .bestelling-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .bestelling-kaart {
+      background: #1a1a1a;
+      border: 1px solid #262626;
+      border-radius: 16px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .bestelling-kaart:hover { border-color: #333; }
+    .bestelling-kaart.voltooid { opacity: 0.5; }
+
+    .kaart-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .kaart-id { font-size: 18px; font-weight: 800; color: #E63946; letter-spacing: 1px; }
+    .kaart-naam { font-size: 14px; color: #aaa; margin-top: 2px; }
+    .kaart-type {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .type-afhalen { background: #1a2a3a; color: #5dade2; }
+    .type-bezorging { background: #1a2a1a; color: #58d68d; }
+
+    /* Huidige status */
+    .status-balk {
+      background: #222;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-icoon { font-size: 20px; }
+    .status-naam { font-size: 14px; font-weight: 600; }
+    .status-nr { font-size: 11px; color: #666; margin-top: 1px; }
+
+    /* Voortgangsbalk */
+    .voortgang-balk-bg {
+      background: #2a2a2a;
+      border-radius: 4px;
+      height: 4px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .voortgang-balk-vulling {
+      height: 100%;
+      background: linear-gradient(90deg, #E63946, #ff6b6b);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* Status knoppen */
+    .status-knoppen {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .btn-status {
+      flex: 1;
+      padding: 9px 6px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-terug { background: #222; color: #888; }
+    .btn-terug:hover:not(:disabled) { background: #2a2a2a; color: #ccc; }
+    .btn-volgende { background: #E63946; color: #fff; }
+    .btn-volgende:hover:not(:disabled) { background: #c0392b; }
+    .btn-status:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* Vertraging sectie */
+    .vertraging-sectie {
+      border-top: 1px solid #262626;
+      padding-top: 14px;
+    }
+    .vertraging-label { font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .vertraging-rij { display: flex; gap: 8px; }
+    .vertraging-input {
+      flex: 1;
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .vertraging-input:focus { border-color: #e67e22; }
+    .vertraging-input::placeholder { color: #555; }
+    .btn-vertraging {
+      background: #e67e22;
+      color: #fff;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-vertraging:hover { background: #ca6f1e; }
+
+    .vertraging-actief {
+      background: #2a1a0a;
+      border: 1px solid #e67e22;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #e67e22;
+      margin-top: 8px;
+      display: none;
+    }
+    .vertraging-actief.show { display: flex; align-items: center; justify-content: space-between; }
+
+    .btn-wis-vertraging {
+      background: none;
+      border: none;
+      color: #e67e22;
+      cursor: pointer;
+      font-size: 12px;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid #222; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Eddy's <span>Sushi</span></div>
+  <div class="header-badge">👨‍🍳 Keuken Dashboard</div>
+</div>
+
+<div class="layout">
+
+  <!-- Zijbalk: nieuwe bestelling -->
+  <div class="sidebar">
+    <div class="sidebar-titel">Nieuwe bestelling</div>
+
+    <div class="form-groep">
+      <label class="form-label">Naam klant</label>
+      <input type="text" class="form-input" id="invoerNaam" placeholder="bijv. Jan Janssen">
+    </div>
+
+    <div class="form-groep">
+      <label class="form-label">Type bestelling</label>
+      <select class="form-select" id="invoerType">
+        <option value="afhalen">🏪 Afhalen</option>
+        <option value="bezorging">🛵 Bezorging</option>
+      </select>
+    </div>
+
+    <button class="btn-aanmaken" onclick="maakBestelling()">
+      + Bestelling aanmaken
+    </button>
+
+    <!-- Tracking link -->
+    <div class="link-resultaat" id="linkResultaat">
+      <div class="link-resultaat-label">✅ Tracking link voor klant</div>
+      <div class="link-box">
+        <div class="link-url" id="trackingLinkTekst">–</div>
+        <button class="btn-kopieer" id="kopieerKnop" onclick="kopieerLink()">Kopieer</button>
+      </div>
+    </div>
+
+    <hr class="scheiding">
+
+    <div class="sidebar-titel">Statussen uitleg</div>
+    <div style="font-size:13px; color:#666; line-height:1.8;">
+      <div>📋 Stap 1 — Bestelling ontvangen</div>
+      <div>🍣 Stap 2 — In bereiding</div>
+      <div>✅/🛵 Stap 3 — Klaar / Onderweg</div>
+      <div>🎉 Stap 4 — Voltooid</div>
+    </div>
+  </div>
+
+  <!-- Hoofd: actieve bestellingen -->
+  <div class="hoofd">
+    <div class="hoofd-titel">
+      Actieve bestellingen
+      <span class="teller" id="teller">0</span>
+    </div>
+
+    <div id="bestellingenLijst">
+      <div class="leeg" id="leegBericht">
+        <span class="emoji">🍱</span>
+        <p>Nog geen bestellingen.<br>Maak er een aan via het formulier.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const socket = io();
+  let huidigeLinkUrl = '';
+
+  const STAPPEN = {
+    afhalen: [
+      { icoon: '📋', naam: 'Bestelling ontvangen' },
+      { icoon: '🍣', naam: 'Bestelling wordt bereid' },
+      { icoon: '⏰', naam: 'Bestelling is bijna klaar' },
+      { icoon: '📦', naam: 'Bestelling wordt verpakt' },
+      { icoon: '✅', naam: 'Bestelling ligt klaar' },
+    ],
+    bezorging: [
+      { icoon: '📋', naam: 'Bestelling ontvangen' },
+      { icoon: '🍣', naam: 'In bereiding' },
+      { icoon: '🛵', naam: 'Onderweg' },
+      { icoon: '🏠', naam: 'Bezorgd' }
+    ]
+  };
+
+  socket.on('connect', () => {
+    socket.emit('join-admin');
+  });
+
+  socket.on('orders-update', (bestellingen) => {
+    toonBestellingen(bestellingen);
+  });
+
+  function maakBestelling() {
+    const naam = document.getElementById('invoerNaam').value.trim() || 'Klant';
+    const type = document.getElementById('invoerType').value;
+
+    fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerName: naam, type })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const volledigeUrl = window.location.origin + data.trackingUrl;
+      huidigeLinkUrl = volledigeUrl;
+      document.getElementById('trackingLinkTekst').textContent = volledigeUrl;
+
+      const resultaat = document.getElementById('linkResultaat');
+      resultaat.classList.add('show');
+
+      const kopieerKnop = document.getElementById('kopieerKnop');
+      kopieerKnop.textContent = 'Kopieer';
+      kopieerKnop.classList.remove('gekopieerd');
+
+      document.getElementById('invoerNaam').value = '';
+    });
+  }
+
+  function kopieerLink() {
+    navigator.clipboard.writeText(huidigeLinkUrl).then(() => {
+      const knop = document.getElementById('kopieerKnop');
+      knop.textContent = 'Gekopieerd!';
+      knop.classList.add('gekopieerd');
+      setTimeout(() => {
+        knop.textContent = 'Kopieer';
+        knop.classList.remove('gekopieerd');
+      }, 2000);
+    });
+  }
+
+  function updateStatus(orderId, nieuweStatus) {
+    socket.emit('update-status', { orderId, status: nieuweStatus });
+  }
+
+  function stuurVertraging(orderId) {
+    const input = document.getElementById(`vertraging-${orderId}`);
+    const minuten = parseInt(input.value);
+    if (!minuten || minuten < 1) {
+      input.focus();
+      input.style.borderColor = '#e74c3c';
+      setTimeout(() => input.style.borderColor = '', 1500);
+      return;
+    }
+    socket.emit('send-delay', { orderId, minutes: minuten });
+    input.value = '';
+  }
+
+  function wisVertraging(orderId) {
+    socket.emit('update-status', { orderId, status: -1 });
+    // Kleine hack: stuur huidige status opnieuw maar wis de vertraging
+    fetch(`/api/order/${orderId}`)
+      .then(r => r.json())
+      .then(bestelling => {
+        socket.emit('update-status', { orderId, status: bestelling.status });
+      });
+  }
+
+  function toonBestellingen(bestellingen) {
+    const lijst = document.getElementById('bestellingenLijst');
+    const teller = document.getElementById('teller');
+
+    if (!bestellingen || bestellingen.length === 0) {
+      teller.textContent = '0';
+      lijst.innerHTML = `
+        <div class="leeg" id="leegBericht">
+          <span class="emoji">🍱</span>
+          <p>Nog geen bestellingen.<br>Maak er een aan via het formulier.</p>
+        </div>`;
+      return;
+    }
+
+    // Sorteren: actief eerst, dan voltooid
+    const gesorteerd = [...bestellingen].sort((a, b) => {
+      if (a.status === 3 && b.status !== 3) return 1;
+      if (a.status !== 3 && b.status === 3) return -1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    teller.textContent = bestellingen.filter(b => b.status < 3).length;
+
+    lijst.innerHTML = `<div class="bestelling-grid">${gesorteerd.map(kaartHTML).join('')}</div>`;
+  }
+
+  function kaartHTML(bestelling) {
+    const stappen = STAPPEN[bestelling.type] || STAPPEN.afhalen;
+    const huidigeStap = stappen[bestelling.status] || stappen[stappen.length - 1];
+    const voortgangPct = Math.round((bestelling.status / (stappen.length - 1)) * 100);
+    const maxStatus = stappen.length - 1;
+    const isVoltooid = bestelling.status >= maxStatus;
+
+    const typeKlasse = bestelling.type === 'bezorging' ? 'type-bezorging' : 'type-afhalen';
+    const typeTekst = bestelling.type === 'bezorging' ? '🛵 Bezorging' : '🏪 Afhalen';
+
+    return `
+      <div class="bestelling-kaart ${isVoltooid ? 'voltooid' : ''}">
+        <div class="kaart-top">
+          <div>
+            <div class="kaart-id">#${bestelling.id}</div>
+            <div class="kaart-naam">${bestelling.customerName}</div>
+          </div>
+          <div class="kaart-type ${typeKlasse}">${typeTekst}</div>
+        </div>
+
+        <!-- Huidige status -->
+        <div class="status-balk">
+          <span class="status-icoon">${huidigeStap.icoon}</span>
+          <div>
+            <div class="status-naam">${huidigeStap.naam}</div>
+            <div class="status-nr">Stap ${bestelling.status + 1} van ${stappen.length}</div>
+          </div>
+        </div>
+
+        <!-- Voortgangsbalk -->
+        <div class="voortgang-balk-bg">
+          <div class="voortgang-balk-vulling" style="width:${voortgangPct}%"></div>
+        </div>
+
+        <!-- Navigatie knoppen -->
+        <div class="status-knoppen">
+          <button class="btn-status btn-terug"
+            onclick="updateStatus('${bestelling.id}', ${bestelling.status - 1})"
+            ${bestelling.status <= 0 ? 'disabled' : ''}>
+            ← Terug
+          </button>
+          <button class="btn-status btn-volgende"
+            onclick="updateStatus('${bestelling.id}', ${bestelling.status + 1})"
+            ${isVoltooid ? 'disabled' : ''}>
+            ${isVoltooid ? '✅ Voltooid' : 'Volgende →'}
+          </button>
+        </div>
+
+        <!-- Vertraging sectie -->
+        ${!isVoltooid ? `
+        <div class="vertraging-sectie">
+          <div class="vertraging-label">⚠️ Vertraging melden</div>
+          <div class="vertraging-rij">
+            <input
+              type="number"
+              class="vertraging-input"
+              id="vertraging-${bestelling.id}"
+              placeholder="Aantal minuten"
+              min="1" max="120"
+            >
+            <button class="btn-vertraging" onclick="stuurVertraging('${bestelling.id}')">
+              Stuur
+            </button>
+          </div>
+          <div class="vertraging-actief ${bestelling.delay ? 'show' : ''}" id="vertragingActief-${bestelling.id}">
+            <span>⚠️ ${bestelling.delay || 0} min. vertraging actief</span>
+            <button class="btn-wis-vertraging" onclick="wisVertraging('${bestelling.id}')">Wissen</button>
+          </div>
+        </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // Enter toets voor aanmaken
+  document.getElementById('invoerNaam').addEventListener('keydown', e => {
+    if (e.key === 'Enter') maakBestelling();
+  });
+</script>
+</body>
+</html>
