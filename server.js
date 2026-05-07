@@ -13,6 +13,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Bestellingen in geheugen opslaan (voor schoolproject)
 const orders = {};
 
+// Reviews in geheugen opslaan
+const reviews = { DEMO01: [], DEMO02: [] };
+
 // Demo bestelling alvast aanmaken zodat tracking direct werkt
 orders['DEMO01'] = {
   id: 'DEMO01',
@@ -87,6 +90,22 @@ io.on('connection', (socket) => {
   socket.on('join-admin', () => {
     socket.join('admin');
     socket.emit('orders-update', Object.values(orders));
+    socket.emit('reviews-update', reviews);
+  });
+
+  // Review ontvangen van klant
+  socket.on('stuur-review', ({ orderId, sterren, tags, tekst }) => {
+    const review = {
+      id: Date.now(),
+      orderId,
+      sterren: parseInt(sterren) || 0,
+      tags: tags || [],
+      tekst: tekst || '',
+      tijdstip: new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })
+    };
+    if (!reviews[orderId]) reviews[orderId] = [];
+    reviews[orderId].push(review);
+    io.to('admin').emit('nieuwe-review', review);
   });
 
   // Status bijwerken

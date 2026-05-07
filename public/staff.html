@@ -301,6 +301,47 @@
     }
     .demo-tab:not(.actief):hover { background: rgba(0,0,0,0.03); }
 
+    /* ── Reviews sectie ── */
+    .review-tabs-bar {
+      display: flex; gap: 6px; margin-bottom: 14px;
+    }
+    .review-demo-tab {
+      flex: 1; padding: 9px 8px; border-radius: 12px;
+      border: 1.5px solid transparent; background: rgba(0,0,0,0.03);
+      font-family: inherit; font-size: 12px; font-weight: 600; color: var(--gray);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .review-demo-tab.actief {
+      background: var(--pink-bg); color: var(--pink); border-color: var(--pink-border);
+    }
+    .review-demo-tab:not(.actief):hover { background: rgba(0,0,0,0.05); }
+
+    .geen-reviews {
+      text-align: center; padding: 22px 0; font-size: 13px; color: rgba(0,0,0,0.28);
+    }
+    .review-lijst { display: flex; flex-direction: column; gap: 10px; }
+    .review-item {
+      background: rgba(240,142,180,0.05); border: 1.5px solid rgba(240,142,180,0.18);
+      border-radius: 14px; padding: 12px 14px;
+      animation: fadeInUp 0.3s ease;
+    }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .ri-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .ri-sterren { font-size: 16px; letter-spacing: 1px; }
+    .ri-tijd { font-size: 10px; color: rgba(0,0,0,0.28); font-weight: 500; }
+    .ri-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+    .ri-tag {
+      background: rgba(240,142,180,0.12); border: 1px solid rgba(240,142,180,0.28);
+      color: var(--pink); font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .ri-tekst { font-size: 12px; color: #555; line-height: 1.5; font-style: italic; }
+    .ri-teller {
+      font-size: 11px; font-weight: 700; color: var(--pink);
+      background: var(--pink-bg); border: 1px solid var(--pink-border);
+      padding: 3px 9px; border-radius: 20px; float: right; margin-top: -2px;
+    }
+
     /* ── Demo voetnoot ── */
     .voetnoot {
       text-align: center; font-size: 11px; color: rgba(0,0,0,0.28);
@@ -514,6 +555,36 @@
 
   </div>
 
+  <!-- Reviews sectie -->
+  <div class="kaart">
+    <div class="kaart-header">
+      <div class="kh-icoon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M11 2 L13.09 8.26 L19.5 8.27 L14.45 11.97 L16.55 18.23 L11 14.54 L5.45 18.23 L7.55 11.97 L2.5 8.27 L8.91 8.26 Z" stroke="#F08EB4" stroke-width="1.7" stroke-linejoin="round" fill="rgba(240,142,180,0.12)"/>
+        </svg>
+      </div>
+      <div style="flex:1">
+        <div class="kh-titel">Klantreviews</div>
+        <div class="kh-desc">Feedback ontvangen via de live tracking</div>
+      </div>
+      <span class="ri-teller" id="reviewTeller">0</span>
+    </div>
+    <div class="kaart-body">
+      <div class="review-tabs-bar">
+        <button class="review-demo-tab actief" id="reviewTab1" onclick="wisselReviewTab(1)">🥡 Demo 1 — Afhalen</button>
+        <button class="review-demo-tab" id="reviewTab2" onclick="wisselReviewTab(2)">🛵 Demo 2 — Bezorgen</button>
+      </div>
+      <div id="reviewsDemo1">
+        <div class="geen-reviews" id="geenReviews1">Nog geen reviews ontvangen</div>
+        <div class="review-lijst" id="lijstDemo1"></div>
+      </div>
+      <div id="reviewsDemo2" style="display:none">
+        <div class="geen-reviews" id="geenReviews2">Nog geen reviews ontvangen</div>
+        <div class="review-lijst" id="lijstDemo2"></div>
+      </div>
+    </div>
+  </div>
+
   <p class="voetnoot">Demo versie · Eddy's Sushi bestellingssysteem</p>
 </div>
 
@@ -655,6 +726,61 @@
     socket.emit('review-verzoek', { orderId: config.orderId });
     toonToast('Review verzoek verzonden!');
   }
+
+  /* ── Reviews ── */
+  let actieveReviewTab = 1;
+  let reviewAantallen = { DEMO01: 0, DEMO02: 0 };
+
+  function wisselReviewTab(nr) {
+    actieveReviewTab = nr;
+    document.getElementById('reviewTab1').classList.toggle('actief', nr === 1);
+    document.getElementById('reviewTab2').classList.toggle('actief', nr === 2);
+    document.getElementById('reviewsDemo1').style.display = nr === 1 ? '' : 'none';
+    document.getElementById('reviewsDemo2').style.display = nr === 2 ? '' : 'none';
+  }
+
+  function voegReviewToe(review) {
+    const demoNr = review.orderId === 'DEMO01' ? 1 : 2;
+    reviewAantallen[review.orderId] = (reviewAantallen[review.orderId] || 0) + 1;
+    const totaal = reviewAantallen.DEMO01 + reviewAantallen.DEMO02;
+    document.getElementById('reviewTeller').textContent = totaal;
+
+    const geenEl = document.getElementById(`geenReviews${demoNr}`);
+    if (geenEl) geenEl.style.display = 'none';
+
+    const lijst = document.getElementById(`lijstDemo${demoNr}`);
+    const sterren = '🍣'.repeat(review.sterren) + '<span style="opacity:0.18">🍣</span>'.repeat(5 - review.sterren);
+    const tagsHtml = (review.tags || []).map(t => `<span class="ri-tag">${t}</span>`).join('');
+    const tekstHtml = review.tekst ? `<div class="ri-tekst">"${review.tekst}"</div>` : '';
+
+    const item = document.createElement('div');
+    item.className = 'review-item';
+    item.innerHTML = `
+      <div class="ri-top">
+        <div class="ri-sterren">${sterren}</div>
+        <div class="ri-tijd">${review.tijdstip}</div>
+      </div>
+      ${tagsHtml ? `<div class="ri-tags">${tagsHtml}</div>` : ''}
+      ${tekstHtml}
+    `;
+    lijst.insertBefore(item, lijst.firstChild);
+  }
+
+  // Ontvang bestaande reviews bij laden
+  socket.on('reviews-update', (alleReviews) => {
+    Object.entries(alleReviews).forEach(([orderId, lijst]) => {
+      lijst.forEach(r => voegReviewToe(r));
+    });
+  });
+
+  // Ontvang nieuwe review realtime
+  socket.on('nieuwe-review', (review) => {
+    voegReviewToe(review);
+    toonToast('Nieuwe review ontvangen! ⭐');
+  });
+
+  // Admin room joinen voor reviews
+  socket.emit('join-admin');
 
   function toonToast(tekst) {
     const el = document.getElementById('toast');

@@ -629,6 +629,13 @@
     document.querySelector('.rv-tekstveld').style.display = 'none';
     document.querySelector('.rv-verstuur').style.display  = 'none';
     document.querySelector('.rv-social').style.display    = 'none';
+    // Stuur review naar intern systeem
+    socket.emit('stuur-review', {
+      orderId: 'DEMO02',
+      sterren: gekozenSterren,
+      tags: Array.from(document.querySelectorAll('.rv-tag.actief')).map(t => t.textContent.trim()),
+      tekst: document.getElementById('rvTekst').value.trim()
+    });
     // Toon bedankscherm met nieuwe code
     document.getElementById('rvCode').textContent = genereerCode();
     document.getElementById('rvBedankt').style.display = 'block';
