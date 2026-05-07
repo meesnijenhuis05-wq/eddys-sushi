@@ -480,12 +480,9 @@
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
 
-    if (huidigStatus === 4) {
-      document.getElementById('afhaalLabel').textContent = '';
-      document.getElementById('afhaaltijd').textContent  = 'Onderweg';
-    } else if (delayMinuten === 0) {
-      document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
-      document.getElementById('afhaaltijd').textContent  = berekenAfhaaltijd();
+    document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
+    if (delayMinuten === 0) {
+      document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
     }
 
     document.getElementById('stappenRij').innerHTML = STAPPEN.map((s, i) => {
@@ -551,6 +548,7 @@
     // Orange state on tracking card + inline rood delay in tijdstekst
     document.getElementById('trackingVol').classList.add('vertraagd');
     const basis = berekenAfhaaltijd();
+    document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
     document.getElementById('afhaaltijd').innerHTML =
       `${basis} <span style="color:#dc2626;font-weight:800">+${min} min</span>`;
     updateScherm();
