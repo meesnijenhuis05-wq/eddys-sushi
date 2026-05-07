@@ -268,6 +268,39 @@
     }
     .toast.zichtbaar { transform: translateX(-50%) translateY(0); }
 
+    /* ── Demo selector ── */
+    .demo-selector {
+      background: white;
+      border-radius: 20px;
+      border: 1.5px solid rgba(240,142,180,0.20);
+      padding: 6px;
+      display: flex;
+      gap: 6px;
+    }
+    .demo-tab {
+      flex: 1;
+      padding: 11px 8px;
+      border-radius: 14px;
+      border: 1.5px solid transparent;
+      background: transparent;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .demo-tab.actief {
+      background: var(--pink-bg);
+      color: var(--pink);
+      border-color: var(--pink-border);
+    }
+    .demo-tab:not(.actief):hover { background: rgba(0,0,0,0.03); }
+
     /* ── Demo voetnoot ── */
     .voetnoot {
       text-align: center; font-size: 11px; color: rgba(0,0,0,0.28);
@@ -315,6 +348,16 @@
       <div class="dl-desc">Open het live tracking scherm van de klant</div>
     </div>
     <a class="dl-link" href="/tracking.html" target="_blank">Openen →</a>
+  </div>
+
+  <!-- Demo selector -->
+  <div class="demo-selector">
+    <button class="demo-tab actief" id="demoTab1" onclick="wisselDemo(1)">
+      🥡 Demo 1 — Afhalen
+    </button>
+    <button class="demo-tab" id="demoTab2" onclick="wisselDemo(2)">
+      🛵 Demo 2 — Bezorgen
+    </button>
   </div>
 
   <!-- Scan kaart -->
@@ -376,7 +419,7 @@
             <line x1="15" y1="15" x2="16" y2="16" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
             <line x1="13.5" y1="16" x2="13.5" y2="16" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
-          Demo: Scan bonnetje
+          <span id="scanBtnTekst">Demo: Scan bonnetje</span>
         </button>
       </div>
     </div>
@@ -404,7 +447,7 @@
         <div class="bestelling-kop">
           <div>
             <div class="bk-naam" id="klantNaam">—</div>
-            <div class="bk-id">Afhalen bij Eddy's Sushi</div>
+            <div class="bk-id" id="bkType">Afhalen bij Eddy's Sushi</div>
           </div>
           <div class="bk-type" id="huidigBadge">Ontvangen</div>
         </div>
@@ -479,7 +522,7 @@
 <script>
   const socket = io();
 
-  const STAPPEN = [
+  const STAPPEN_AFHALEN = [
     { naam: 'Bestelling ontvangen', omsch: 'Bestelling is binnengekomen' },
     { naam: 'Wordt bereid',         omsch: 'Chef is bezig met uw sushi' },
     { naam: 'Bijna klaar',          omsch: 'Nog even geduld' },
@@ -487,15 +530,55 @@
     { naam: 'Staat klaar',          omsch: 'Klant kan afhalen' },
     { naam: 'Geniet van je geluksmoment', omsch: 'Bestelling opgehaald ✨', geniet: true },
   ];
-  const BADGE_NAMEN = ['Ontvangen', 'Wordt bereid', 'Bijna klaar', 'Wordt verpakt', 'Staat klaar', 'Opgehaald'];
+  const BADGE_AFHALEN = ['Ontvangen', 'Wordt bereid', 'Bijna klaar', 'Wordt verpakt', 'Staat klaar', 'Opgehaald'];
+
+  const STAPPEN_BEZORGEN = [
+    { naam: 'Bestelling ontvangen', omsch: 'Bestelling is binnengekomen' },
+    { naam: 'Wordt bereid',         omsch: 'Chef is bezig met uw sushi' },
+    { naam: 'Bijna klaar',          omsch: 'Nog even geduld' },
+    { naam: 'Wordt verpakt',        omsch: 'Klaar voor bezorging' },
+    { naam: 'Onderweg',             omsch: 'Bezorger is op weg naar u' },
+    { naam: 'Geniet van je geluksmoment', omsch: 'Bezorging voltooid ✨', geniet: true },
+  ];
+  const BADGE_BEZORGEN = ['Ontvangen', 'Wordt bereid', 'Bijna klaar', 'Wordt verpakt', 'Onderweg', 'Bezorgd'];
+
+  const DEMO_CONFIG = {
+    1: { orderId: 'DEMO01', naam: 'Demo Klant', stappen: STAPPEN_AFHALEN, badges: BADGE_AFHALEN, typeTekst: "Afhalen bij Eddy's Sushi" },
+    2: { orderId: 'DEMO02', naam: 'Demo Klant', stappen: STAPPEN_BEZORGEN, badges: BADGE_BEZORGEN, typeTekst: 'Bezorging aan huis' },
+  };
 
   let huidigStatus = 0;
   let gescand = false;
+  let huidigeDemo = 1;
+
+  function wisselDemo(nr) {
+    if (huidigeDemo === nr) return;
+    huidigeDemo = nr;
+    huidigStatus = 0;
+    gescand = false;
+
+    document.getElementById('demoTab1').classList.toggle('actief', nr === 1);
+    document.getElementById('demoTab2').classList.toggle('actief', nr === 2);
+
+    // Verberg bestelling sectie
+    document.getElementById('bestellingSectie').style.display = 'none';
+
+    // Reset scan knop
+    const btn = document.getElementById('scanKnop');
+    btn.disabled = false;
+    btn.classList.remove('scanning');
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.border = '';
+    document.getElementById('scanBtnTekst').textContent = 'Demo: Scan bonnetje';
+
+    toonToast(nr === 1 ? '🥡 Demo 1 — Afhalen geselecteerd' : '🛵 Demo 2 — Bezorgen geselecteerd');
+  }
 
   function simuleerScan() {
     if (gescand) return;
     const btn = document.getElementById('scanKnop');
-    btn.textContent = 'Bezig met scannen...';
+    document.getElementById('scanBtnTekst').textContent = 'Bezig met scannen...';
     btn.classList.add('scanning');
     btn.disabled = true;
 
@@ -503,8 +586,10 @@
       gescand = true;
       btn.classList.remove('scanning');
 
-      document.getElementById('orderIdDisplay').textContent = 'DEMO01';
-      document.getElementById('klantNaam').textContent = 'Demo Klant';
+      const config = DEMO_CONFIG[huidigeDemo];
+      document.getElementById('orderIdDisplay').textContent = config.orderId;
+      document.getElementById('klantNaam').textContent = config.naam;
+      document.getElementById('bkType').textContent = config.typeTekst;
 
       const sectie = document.getElementById('bestellingSectie');
       sectie.style.display = 'flex';
@@ -514,7 +599,7 @@
       bouwStatusGrid();
       toonToast('Bestelling geladen!');
 
-      btn.textContent = 'Bonnetje gescand';
+      document.getElementById('scanBtnTekst').textContent = 'Bonnetje gescand';
       btn.style.background = 'rgba(240,142,180,0.25)';
       btn.style.color = '#F08EB4';
       btn.style.border = '1.5px solid rgba(240,142,180,0.4)';
@@ -522,8 +607,9 @@
   }
 
   function bouwStatusGrid() {
+    const config = DEMO_CONFIG[huidigeDemo];
     const grid = document.getElementById('statusGrid');
-    grid.innerHTML = STAPPEN.map((stap, i) => {
+    grid.innerHTML = config.stappen.map((stap, i) => {
       let cls = '';
       let nrInhoud = i + 1;
       if (i < huidigStatus) { cls = 'voltooid'; nrInhoud = '✓'; }
@@ -540,24 +626,27 @@
       </button>`;
     }).join('');
 
-    document.getElementById('huidigBadge').textContent = BADGE_NAMEN[huidigStatus];
+    document.getElementById('huidigBadge').textContent = config.badges[huidigStatus];
   }
 
   function setStatus(index) {
+    const config = DEMO_CONFIG[huidigeDemo];
     huidigStatus = index;
     bouwStatusGrid();
-    socket.emit('update-status', { orderId: 'DEMO01', status: index });
-    toonToast('Status bijgewerkt: ' + STAPPEN[index].naam);
+    socket.emit('update-status', { orderId: config.orderId, status: index });
+    toonToast('Status bijgewerkt: ' + config.stappen[index].naam);
   }
 
   function stuurVertraging() {
+    const config = DEMO_CONFIG[huidigeDemo];
     const min = parseInt(document.getElementById('delayInput').value) || 15;
-    socket.emit('send-delay', { orderId: 'DEMO01', minutes: min });
+    socket.emit('send-delay', { orderId: config.orderId, minutes: min });
     toonToast('Vertraging gemeld: ' + min + ' minuten');
   }
 
   function stuurReviewVerzoek() {
-    socket.emit('review-verzoek', { orderId: 'DEMO01' });
+    const config = DEMO_CONFIG[huidigeDemo];
+    socket.emit('review-verzoek', { orderId: config.orderId });
     toonToast('Review verzoek verzonden!');
   }
 

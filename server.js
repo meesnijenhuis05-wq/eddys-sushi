@@ -23,6 +23,15 @@ orders['DEMO01'] = {
   delay: null
 };
 
+orders['DEMO02'] = {
+  id: 'DEMO02',
+  customerName: 'Demo Klant',
+  type: 'bezorging',
+  status: 0,
+  createdAt: new Date().toISOString(),
+  delay: null
+};
+
 function generateOrderId() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
