@@ -144,8 +144,20 @@
     .sug-titel { font-size: 19px; font-weight: 700; color: #1a1a1a; line-height: 1.2; }
     .sug-desc  { font-size: 12px; color: #999; margin-top: 3px; }
 
+    /* Auto tracker */
+    .auto-tracker-wrap { position: relative; margin-bottom: 14px; }
+    .auto-icoon-laag { position: relative; height: 24px; margin-bottom: 4px; }
+    .auto-icoon {
+      position: absolute;
+      width: 28px; height: 18px;
+      transform: translateX(-50%);
+      transition: left 0.9s cubic-bezier(0.4,0,0.2,1);
+      left: 0%;
+      filter: drop-shadow(0 2px 4px rgba(240,142,180,0.40));
+    }
+
     /* Progress */
-    .voortgang-bg { height: 8px; background: rgba(240,142,180,0.15); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+    .voortgang-bg { height: 8px; background: rgba(240,142,180,0.15); border-radius: 4px; overflow: hidden; }
     .voortgang-fill {
       height: 100%; background: linear-gradient(90deg, #F08EB4 0%, #f7c8db 100%);
       border-radius: 4px; transition: width 0.9s cubic-bezier(0.4,0,0.2,1); width: 0%; position: relative;
@@ -326,7 +338,25 @@
                 </div>
               </div>
 
-              <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
+              <div class="auto-tracker-wrap">
+                <div class="auto-icoon-laag">
+                  <div class="auto-icoon" id="autoIcoon">
+                    <svg viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="7" cy="14.5" r="3.5" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.5"/>
+                      <circle cx="7" cy="14.5" r="1.4" fill="#F08EB4"/>
+                      <circle cx="21" cy="14.5" r="3.5" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.5"/>
+                      <circle cx="21" cy="14.5" r="1.4" fill="#F08EB4"/>
+                      <rect x="2.5" y="8.5" width="23" height="6.5" rx="2" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.4"/>
+                      <path d="M7 8.5 L9.5 3 L18.5 3 L22 8.5 Z" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.4" stroke-linejoin="round"/>
+                      <rect x="10" y="3.5" width="3.5" height="4.5" rx="0.8" fill="#F08EB4" opacity="0.20"/>
+                      <rect x="14.5" y="3.5" width="3.5" height="4.5" rx="0.8" fill="#F08EB4" opacity="0.20"/>
+                      <rect x="24" y="10" width="1.5" height="2.5" rx="0.7" fill="#F08EB4" opacity="0.65"/>
+                      <rect x="2.5" y="10" width="1.5" height="2.5" rx="0.7" fill="#F08EB4" opacity="0.35"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
+              </div>
               <div class="stappen-rij" id="stappenRij"></div>
 
               <!-- WhatsApp -->
@@ -476,6 +506,7 @@
     document.getElementById('stapIcoon').innerHTML    = stap.icoonGroot;
     document.getElementById('statusNaam').textContent = stap.vol;
     document.getElementById('voortgangFill').style.width = VOORTGANG[huidigStatus] + '%';
+    document.getElementById('autoIcoon').style.left = VOORTGANG[huidigStatus] + '%';
 
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
