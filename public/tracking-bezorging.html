@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Eddy's Sushi – Bezorging volgen</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; overflow-y: auto;
+    }
+    .pagina { display: flex; align-items: center; justify-content: center; padding: 50px 20px; min-height: 100vh; }
+
+    /* ── Telefoon ── */
+    .telefoon {
+      position: relative; width: 393px; height: 852px;
+      background: linear-gradient(160deg, #f4f4f4 0%, #dcdcdc 100%);
+      border-radius: 54px; padding: 12px; flex-shrink: 0;
+      box-shadow: 0 0 0 1.5px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(255,255,255,0.85),
+        0 50px 120px rgba(0,0,0,0.28), 0 20px 50px rgba(0,0,0,0.12);
+    }
+    .telefoon::before {
+      content: ''; position: absolute; left: -4px; top: 132px;
+      width: 4px; border-radius: 3px 0 0 3px; height: 34px; background: #ccc;
+      box-shadow: 0 52px 0 #ccc, 0 96px 0 #ccc;
+    }
+    .telefoon::after {
+      content: ''; position: absolute; right: -4px; top: 180px;
+      width: 4px; height: 72px; background: #ccc; border-radius: 0 3px 3px 0;
+    }
+    @keyframes trilling {
+      0%,100% { transform: translateX(0) rotate(0deg); }
+      15% { transform: translateX(-5px) rotate(-0.5deg); }
+      30% { transform: translateX(5px) rotate(0.5deg); }
+      45% { transform: translateX(-4px) rotate(-0.4deg); }
+      60% { transform: translateX(4px) rotate(0.4deg); }
+      75% { transform: translateX(-2px); }
+      90% { transform: translateX(2px); }
+    }
+    .telefoon.trilt { animation: trilling 0.55s ease; }
+
+    .telefoon-scherm { width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: #000; position: relative; }
+
+    /* ── Lock screen ── */
+    .lock-screen {
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(ellipse 240px 120px at 18% 28%, rgba(255,255,255,0.78) 0%, transparent 100%),
+        radial-gradient(ellipse 170px 85px at 72% 18%, rgba(255,255,255,0.68) 0%, transparent 100%),
+        radial-gradient(ellipse 120px 60px at 45% 38%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(ellipse 95px 48px at 85% 35%, rgba(255,255,255,0.38) 0%, transparent 100%),
+        linear-gradient(185deg, #1FA8CE 0%, #3FC0E0 20%, #6DCFE8 45%, #A8E3F2 70%, #D0F0FA 100%);
+      display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;
+    }
+    .status-bar {
+      width: 100%; max-width: 430px; display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 26px 0; flex-shrink: 0;
+    }
+    .sb-tijd { font-size: 15px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .sb-icons { display: flex; align-items: center; gap: 6px; }
+    .dynamic-island { width: 120px; height: 34px; background: #000; border-radius: 20px; margin-top: 10px; flex-shrink: 0; }
+    .klok { text-align: center; margin-top: 22px; flex-shrink: 0; }
+    .klok-tijd { font-size: 80px; font-weight: 200; color: #fff; letter-spacing: -5px; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 2px 16px rgba(0,0,0,0.18); }
+    .klok-datum { font-size: 18px; color: rgba(255,255,255,0.82); margin-top: 6px; font-weight: 400; }
+    .spacer { flex: 1; }
+
+    /* ── Bottom area ── */
+    .bottom-area { width: 100%; max-width: 430px; padding: 0 14px 28px; flex-shrink: 0; display: flex; flex-direction: column; gap: 9px; }
+
+    /* ── Klaar notificatie ── */
+    .klaar-notif { background: #fff; border-radius: 18px; border-left: 5px solid #F08EB4; padding: 11px 13px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .klaar-notif.zichtbaar { display: flex; align-items: center; gap: 10px; animation: schuifIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .kn-check { width: 30px; height: 30px; border-radius: 50%; background: rgba(240,142,180,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .kn-tekst { flex: 1; }
+    .kn-titel { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+    .kn-desc  { font-size: 11px; color: #999; margin-top: 2px; }
+    .kn-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(240,142,180,0.12); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ── Vertraging melding ── */
+    .vertraging-melding { background: #fff; border-left: 5px solid #FF9800; border-radius: 18px; padding: 11px 13px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    .vertraging-melding.zichtbaar { display: flex; align-items: center; gap: 10px; animation: schuifIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .vm-klok { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,152,0,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .vm-tekst { flex: 1; }
+    .vm-titel { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+    .vm-desc  { font-size: 11px; color: #999; margin-top: 2px; }
+    .vm-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,152,0,0.10); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ── Gedeelde kaart stijl ── */
+    .kaart-basis {
+      background: rgba(255,255,255,0.90); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      border: 2px solid rgba(240,142,180,0.68); box-shadow: 0 8px 40px rgba(0,0,0,0.10); width: 100%;
+    }
+
+    /* ── Compact view ── */
+    .tracking-compact { display: none; border-radius: 20px; }
+    .tracking-compact.zichtbaar { display: flex; align-items: center; gap: 12px; padding: 13px 16px; animation: schuifIn 0.3s ease; }
+    .tc-icoon { font-size: 18px; flex-shrink: 0; width: 22px; text-align: center; line-height: 1; }
+    .tc-mid { flex: 1; }
+    .tc-naam { font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 5px; }
+    .tc-balk-bg { height: 5px; background: rgba(240,142,180,0.15); border-radius: 3px; overflow: hidden; }
+    .tc-balk-fill { height: 100%; background: linear-gradient(90deg, #F08EB4, #f7c8db); border-radius: 3px; transition: width 0.7s ease; width: 0%; }
+    .tc-plus {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(240,142,180,0.12); border: 1.5px solid rgba(240,142,180,0.38);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #F08EB4; font-size: 18px; font-weight: 300; flex-shrink: 0; font-family: inherit;
+    }
+    /* Geniet staat: gecentreerde tekst, geen balk of knop */
+    .tracking-compact.geniet-staat { justify-content: center; }
+    .tracking-compact.geniet-staat .tc-icoon { display: none; }
+    .tracking-compact.geniet-staat .tc-mid { flex: none; text-align: center; }
+    .tracking-compact.geniet-staat .tc-naam { font-size: 13px; font-weight: 800; color: #F08EB4; margin-bottom: 0; }
+    .tracking-compact.geniet-staat .tc-balk-bg { display: none; }
+    .tracking-compact.geniet-staat .tc-plus { display: none; }
+
+    /* ── Volledige tracking kaart ── */
+    .tracking-vol { border-radius: 24px; }
+    .kaart-body { padding: 14px 15px 13px; }
+
+    /* Kaart header */
+    .kaart-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+    .header-logo-wrap { flex-shrink: 0; line-height: 0; }
+    .header-logo-wrap svg { display: block; }
+    .kh-rechts { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .kh-top { display: flex; align-items: center; gap: 7px; }
+    .afhaal-label { font-size: 10px; font-weight: 800; color: #F08EB4; letter-spacing: 0.8px; text-transform: uppercase; }
+    .min-btn {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(240,142,180,0.12); border: 1.5px solid rgba(240,142,180,0.32);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; font-weight: 300; color: #F08EB4;
+      line-height: 0.9; flex-shrink: 0; font-family: inherit;
+    }
+    .afhaal-tijd { display: flex; align-items: center; gap: 6px; background: rgba(240,142,180,0.10); border: 1px solid rgba(240,142,180,0.28); border-radius: 11px; padding: 6px 9px; }
+    .at-label { font-size: 8.5px; color: #bbb; text-transform: uppercase; letter-spacing: 0.8px; line-height: 1; }
+    .at-tijd  { font-size: 12px; font-weight: 700; color: #F08EB4; line-height: 1.3; }
+
+    /* Status */
+    .stap-icoon-groot { display: flex; align-items: center; gap: 13px; margin-bottom: 12px; }
+    .sug-icoon { width: 54px; height: 54px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sug-tekst { flex: 1; }
+    .sug-titel { font-size: 19px; font-weight: 700; color: #1a1a1a; line-height: 1.2; }
+    .sug-desc  { font-size: 12px; color: #999; margin-top: 3px; }
+
+    /* Progress */
+    .voortgang-bg { height: 8px; background: rgba(240,142,180,0.15); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+    .voortgang-fill {
+      height: 100%; background: linear-gradient(90deg, #F08EB4 0%, #f7c8db 100%);
+      border-radius: 4px; transition: width 0.9s cubic-bezier(0.4,0,0.2,1); width: 0%; position: relative;
+    }
+    .voortgang-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%); border-radius: 4px; }
+
+    /* Steps */
+    .stappen-rij { display: flex; justify-content: space-between; align-items: flex-start; position: relative; margin-top: 3px; }
+    .stappen-rij::before { content: ''; position: absolute; top: 13px; left: 13px; right: 13px; height: 2px; background: rgba(240,142,180,0.13); z-index: 0; }
+    .stap-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; position: relative; z-index: 1; }
+    .stap-bol { width: 26px; height: 26px; border-radius: 50%; background: rgba(240,142,180,0.10); border: 2px solid rgba(240,142,180,0.18); display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.45s ease; }
+    .stap-item.voltooid .stap-bol { background: #F08EB4; border-color: #F08EB4; color: white; }
+    .stap-item.actief .stap-bol { background: rgba(240,142,180,0.18); border-color: #F08EB4; animation: bolPuls 2s infinite; }
+    @keyframes bolPuls { 0%,100%{ box-shadow: 0 0 0 0 rgba(240,142,180,0.6); } 50%{ box-shadow: 0 0 0 7px rgba(240,142,180,0); } }
+    .stap-label { font-size: 7px; color: rgba(0,0,0,0.28); text-align: center; line-height: 1.2; max-width: 42px; }
+    .stap-item.actief .stap-label  { color: #F08EB4; font-weight: 700; }
+    .stap-item.voltooid .stap-label { color: rgba(0,0,0,0.5); }
+
+    /* WhatsApp */
+    .whatsapp-sectie { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(240,142,180,0.14); }
+    .wa-label { font-size: 10.5px; color: rgba(0,0,0,0.36); font-weight: 500; }
+    .wa-knop { width: 38px; height: 38px; border-radius: 50%; background: rgba(240,142,180,0.10); display: flex; align-items: center; justify-content: center; text-decoration: none; transition: background 0.18s, transform 0.12s; }
+    .wa-knop:active { background: rgba(240,142,180,0.22); transform: scale(0.9); }
+
+
+    /* ── Home bar ── */
+    .home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: rgba(255,255,255,0.4); border-radius: 3px; }
+
+    /* ── Review overlay ── */
+    .review-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 100; backdrop-filter: blur(6px); }
+    .review-overlay.zichtbaar { display: flex; animation: fadeIn 0.3s ease; }
+    .review-kaart { background: white; border-radius: 28px 28px 0 0; padding: 22px 20px 38px; width: 100%; position: relative; }
+    .rv-sluiten { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; background: #f0f0f0; border: none; cursor: pointer; font-size: 14px; color: #888; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rv-logo { text-align: center; margin-bottom: 10px; }
+    .rv-titel { font-size: 17px; font-weight: 700; color: #1a1a1a; text-align: center; padding-right: 36px; }
+    .rv-sub { font-size: 12px; color: #999; text-align: center; margin-top: 3px; margin-bottom: 14px; }
+    /* Sushi emoji rating */
+    .rv-sushi-rij { display: flex; justify-content: center; gap: 6px; margin-bottom: 13px; }
+    .rv-sushi { font-size: 32px; line-height: 1; cursor: pointer; opacity: 0.20; filter: grayscale(1); transition: transform 0.15s, opacity 0.15s, filter 0.15s; user-select: none; }
+    .rv-sushi.actief { opacity: 1; filter: none; transform: scale(1.12); }
+    .rv-sushi:hover { opacity: 0.55; transform: scale(1.2); filter: grayscale(0.2); }
+    .rv-sushi.actief:hover { opacity: 1; transform: scale(1.2); }
+    /* Social proof (below button) */
+    .rv-social { text-align: center; margin-top: 10px; }
+    .rv-social-tekst { font-size: 11px; color: #ccc; font-weight: 500; }
+    /* Kortingscode scherm */
+    .rv-bedankt-tekst { font-size: 14px; font-weight: 600; color: #F08EB4; text-align: center; margin-bottom: 14px; }
+    .rv-code-wrap { background: linear-gradient(135deg, rgba(240,142,180,0.07), rgba(255,220,234,0.14)); border: 2px dashed rgba(240,142,180,0.38); border-radius: 16px; padding: 14px 12px; margin-bottom: 10px; text-align: center; }
+    .rv-code-label { font-size: 9.5px; font-weight: 800; color: #F08EB4; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 9px; }
+    .rv-code { font-size: 22px; font-weight: 800; color: #1a1a1a; letter-spacing: 3px; font-variant-numeric: tabular-nums; }
+    .rv-code-desc { font-size: 11px; color: #bbb; margin-top: 7px; line-height: 1.4; }
+    .rv-timer { text-align: center; font-size: 11px; color: #ccc; }
+    /* Quick tags */
+    .rv-tags { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-bottom: 12px; }
+    .rv-tag { background: rgba(240,142,180,0.08); border: 1.5px solid rgba(240,142,180,0.22); color: #bbb; font-size: 12px; font-weight: 600; padding: 6px 13px; border-radius: 20px; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+    .rv-tag.actief { background: rgba(240,142,180,0.18); border-color: #F08EB4; color: #F08EB4; }
+    .rv-tag:hover { border-color: rgba(240,142,180,0.48); color: #d4709a; }
+    .rv-tekstveld { width: 100%; background: #f7f7f7; border: 1.5px solid #eee; border-radius: 14px; padding: 11px 13px; font-size: 14px; color: #1a1a1a; outline: none; font-family: inherit; resize: none; height: 70px; margin-bottom: 13px; transition: border-color 0.2s; }
+    .rv-tekstveld:focus { border-color: #F08EB4; }
+    .rv-verstuur { width: 100%; background: linear-gradient(135deg, #F08EB4, #e07aa0); color: white; border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.18s; letter-spacing: 0.2px; }
+    .rv-verstuur:hover { opacity: 0.88; }
+    .rv-bedankt { text-align: center; font-size: 14px; font-weight: 600; color: #F08EB4; padding: 6px 0; display: none; }
+    /* Delay badge next to time */
+    .delay-badge { background: rgba(220,38,38,0.10); border: 1px solid rgba(220,38,38,0.28); color: #dc2626; font-size: 9.5px; font-weight: 800; padding: 3px 7px; border-radius: 8px; letter-spacing: 0.2px; flex-shrink: 0; align-self: center; display: none; }
+    /* Orange delay state on tracking card */
+    .tracking-vol.vertraagd .voortgang-fill { background: linear-gradient(90deg, #FF9800 0%, #ffcc80 100%); }
+    .tracking-vol.vertraagd .stap-item.actief .stap-bol { border-color: #FF9800; animation: bolPulsOranje 2s infinite; }
+    @keyframes bolPulsOranje { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,152,0,0.6); } 50%{ box-shadow: 0 0 0 7px rgba(255,152,0,0); } }
+    .tracking-vol.vertraagd .at-tijd { color: #FF9800; }
+
+    @keyframes schuifIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+  </style>
+</head>
+<body>
+<script src="/socket.io/socket.io.js"></script>
+<div class="pagina">
+  <div class="telefoon" id="telefoon">
+    <div class="telefoon-scherm">
+      <div class="lock-screen">
+
+        <div class="status-bar">
+          <span class="sb-tijd" id="sbTijd">–</span>
+          <div class="sb-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="white"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity="0.35"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><circle cx="8" cy="11" r="1.5" fill="white"/><path d="M4.5 7.5a5 5 0 017 0" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 4.5a9 9 0 0113 0" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.45"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.7"/><rect x="22" y="3.5" width="2" height="5" rx="1" fill="white" fill-opacity="0.45"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="white"/></svg>
+          </div>
+        </div>
+
+        <div class="dynamic-island"></div>
+        <div class="klok">
+          <div class="klok-tijd" id="klokTijd">–</div>
+          <div class="klok-datum" id="klokDatum">–</div>
+        </div>
+        <div class="spacer"></div>
+
+        <div class="bottom-area">
+
+          <!-- Klaar notificatie -->
+          <div class="klaar-notif" id="klaarNotif">
+            <div class="kn-check">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3.5 9 L7.5 13 L14.5 5" stroke="#F08EB4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="kn-tekst">
+              <div class="kn-titel">Bezorger is onderweg!</div>
+              <div class="kn-desc">Uw bestelling wordt nu bezorgd.</div>
+            </div>
+            <button class="kn-sluiten" onclick="sluitKlaarNotif()">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <!-- Vertraging melding -->
+          <div class="vertraging-melding" id="vertragingMelding">
+            <div class="vm-klok">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF9800" stroke-width="1.8"/><path d="M9 5 L9 9 L12 11.5" stroke="#FF9800" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="vm-tekst">
+              <div class="vm-titel">Bestelling vertraagd</div>
+              <div class="vm-desc" id="vmDesc">–</div>
+            </div>
+            <button class="vm-sluiten" onclick="sluitVertragingNotif()">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <!-- Compact view (geminimaliseerd) -->
+          <div class="kaart-basis tracking-compact" id="trackingCompact">
+            <div class="tc-icoon" id="tcIcoon"></div>
+            <div class="tc-mid">
+              <div class="tc-naam" id="tcNaam">–</div>
+              <div class="tc-balk-bg"><div class="tc-balk-fill" id="tcFill"></div></div>
+            </div>
+            <button class="tc-plus" onclick="vergroot()">+</button>
+          </div>
+
+          <!-- Volledige tracking kaart -->
+          <div class="kaart-basis tracking-vol" id="trackingVol">
+            <div class="kaart-body">
+
+              <div class="kaart-header">
+                <div class="header-logo-wrap">
+                  <svg width="80" height="53" viewBox="0 0 1058 707" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#lc)">
+                      <mask id="lm" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1058" height="707">
+                        <path d="M1057.48 0H0V706.427H1057.48V0Z" fill="white"/>
+                      </mask>
+                      <g mask="url(#lm)">
+                        <path d="M47.636 211.081C90.7656 129.268 196.244 109.691 268.871 96.2093C412.399 69.568 446.069 125.695 639.015 106.845C725.94 98.3534 745.52 84.3813 798.559 97.2733C867.359 113.996 951.488 165.961 988.948 261.072C1034.53 376.8 980.495 478.92 965.548 504.643C959.343 515.324 896.389 620.024 779.413 642.915C690.621 660.291 674.324 610.252 531.588 601.433C416.789 594.341 400.817 625.071 310.352 605.688C278.873 598.943 200.505 581.139 134.853 517.407C61.4364 446.137 -4.24895 309.503 47.636 211.081Z" fill="white"/>
+                        <path d="M795.565 181.888C797.897 182.843 799.593 184.891 800.133 187.351C800.44 188.747 800.66 190.272 800.521 191.764C800.044 196.897 798.596 201.949 797.424 207.005C796.085 212.785 799.709 218.432 804.583 217.251C808.383 216.328 812.953 214.893 815.225 212.097C820.473 205.639 825.421 198.624 828.885 191.096C835.544 176.628 838.224 161.755 832.112 145.852C826.796 132.023 806.487 118.939 791.335 128.841C788.441 130.732 785.895 133.143 783.083 135.169C769.741 144.787 770.148 168.707 784.844 177.095C788.013 178.904 791.468 180.213 795.565 181.888ZM802.147 615.205C804.733 614.858 807.369 614.729 809.896 614.131C826.313 610.246 835.552 598.369 842.083 584.08C850.685 565.256 849.669 545.231 847.62 525.367C846.552 515.008 844.4 504.712 842.039 494.549C838.545 479.521 837.051 464.069 830.228 449.743C824.785 438.312 818.143 428.1 808.34 420.305C802.952 416.02 796.644 413.265 789.064 414.068C775.387 415.519 766.495 429.668 767.343 440.972C768.189 452.277 769.095 463.579 770.025 474.877C770.752 483.711 771.593 492.533 772.315 501.368C772.752 506.717 773.568 512.103 773.304 517.427C772.883 525.949 771.541 534.423 770.899 542.94C770.349 550.213 770.467 557.54 769.872 564.809C769.12 573.993 769.572 583.012 772.405 591.809C777.185 606.651 788.941 615.541 802.147 615.205ZM290.3 584.927H290.301C297.657 584.301 305.472 583.232 312.947 579.172C330.041 569.887 337.897 555.111 338.987 536.528C339.54 527.077 337.129 518.037 331.681 509.721C323.941 497.907 314.28 488.777 300.925 483.859C290.617 480.063 281.243 474.777 273.715 466.655C272.067 464.876 270.373 462.685 269.876 460.427C269.416 458.343 269.971 454.364 271.075 453.963C273.241 453.175 276.643 453.519 278.528 454.835C280.596 456.279 282.064 459.181 282.855 461.739C285.145 469.14 290.205 473.443 297.185 475.989C299.245 476.741 301.233 477.693 303.293 478.447C312.709 481.891 324.524 476.745 328.641 467.499C333.011 457.688 331.997 447.731 328.003 438.396C322.673 425.943 314.4 415.429 302.637 408.275C294.2 403.143 285.389 400.109 275.284 399.279C268.841 398.748 255.537 401.496 254.953 401.709C251.104 403.124 248.095 404.264 244.625 406.607C235.301 412.904 229.524 418.988 226.995 428.105C222.551 444.131 222.328 460.052 231.883 475.372C235.591 481.316 239.879 485.379 245.465 488.772C248.093 490.368 250.961 491.653 253.34 493.555C258.34 497.555 263.621 501.416 267.731 506.235C270.028 508.929 270.625 513.373 271.127 517.144C271.308 518.507 269.24 521.02 267.713 521.516C266.197 522.009 263.627 521.12 262.321 519.945C260.548 518.349 258.868 516.068 258.316 513.797C255.439 501.967 247.139 494.968 236.808 490.504C225.572 485.651 215.141 487.844 209.66 499.947C206.865 506.12 208.343 512.157 209.741 517.871C214.295 536.48 225.019 551.495 239.279 563.924C253.629 576.433 270.16 584.191 290.3 584.927ZM417.669 399C411.527 399.82 410.127 400.457 405.072 404.637C400.247 408.627 397.327 414.492 396.637 420.679C396.631 420.744 396.624 420.811 396.616 420.876C395.863 428.121 396.113 435.516 396.44 442.82C397.144 458.553 398.405 474.263 398.996 489.999C399.259 497.011 398.06 504.013 394.112 510.088C391.82 513.616 389.483 514.869 386.819 508.625C381.164 495.367 385.072 480.977 387.507 467.169C389.56 455.528 392.325 444.025 391.233 431.94C389.903 417.221 382.347 405.1 365.584 402.315C357.851 401.029 346.652 406.937 345.705 415.943C345.084 421.84 343.476 427.627 342.695 433.513C341.093 445.581 339.409 457.657 338.44 469.784C337.935 476.116 339.076 482.563 339.117 488.959C339.232 507.141 342.867 524.749 348.063 542.02C350.608 550.484 354.149 558.795 360.661 565.148C373.977 578.139 390.039 583.103 408.543 581.584C432.439 579.622 447.84 565.976 457.639 545.575C464.349 531.603 467.697 516.467 464.92 500.735C462.528 487.191 460.46 473.527 456.929 460.268C453.052 445.712 447.073 431.717 443.144 417.172C440.535 407.511 433.984 401.332 424.131 399.151C422.815 398.86 419.635 398.737 417.669 399ZM595.721 535.268C595.641 533.612 595.564 531.969 595.485 530.315C594.968 527.165 594.553 523.987 593.629 520.963C588.021 502.601 577.276 488.859 559.213 480.792C546.845 475.268 537.175 465.895 529.791 454.495C529.611 454.217 529.487 453.904 529.405 453.563C528.404 449.392 531.376 446.904 535.292 448.653C535.604 448.792 535.884 448.964 536.127 449.181C539.359 452.079 542.009 455.671 544.664 459.156C550.989 467.463 558.175 474.072 567.953 478.919C580.6 485.185 596.564 471.984 597.98 461.195C599.663 448.383 596.891 436.637 590.273 425.5C585.828 418.016 580.663 411.213 573.601 406.3C566.869 401.616 559.392 396.86 552.473 392.423C536.939 383.027 511.281 382.589 493.277 387.844C482.583 391.363 477.157 400.943 471.919 409.972C467.429 417.709 465.889 426.46 468.42 435.253C470.051 440.924 472.159 446.62 475.071 451.724C480.169 460.661 487.295 468.008 496.367 473.02C506.553 478.648 516.295 484.803 523.689 493.932C526.125 496.939 528.095 500.529 529.377 504.171C529.983 505.885 529.089 509.228 527.713 510.213C526.463 511.109 522.936 510.551 521.653 509.329C518.749 506.567 516.265 503.201 514.231 499.719C509.492 491.612 503.408 484.863 495.764 479.432C483.905 471.008 471.351 481.833 469.517 491.832C467.079 505.124 470.504 518.076 476.392 529.948C482.377 542.019 489.736 553.185 500.368 562.156C512.321 572.241 525.003 579.781 540.863 581.697C554.349 583.327 566.567 580.005 576.571 571.609C587.692 562.276 594.705 550.212 595.721 535.268ZM289.309 232.74C289.313 232.74 289.317 232.743 289.317 232.747C291.003 248.857 292.764 264.34 294.151 279.856C294.535 284.149 293.985 288.561 293.551 292.888C292.404 304.281 285.788 326.713 285.689 326.988C282.524 335.747 284.424 343.308 290.632 350.184C297.896 358.227 307.261 361.195 317.553 361.493C322.795 361.645 328.108 360.685 333.328 359.847C344.116 358.115 355.237 357.283 365.529 353.947C377.823 349.961 389.563 344.092 401.236 338.409C417.472 330.505 428.256 317.171 435.669 301.069C441.392 288.641 444.855 275.572 446.8 261.932C448.668 248.829 447.936 235.988 445.167 223.301C441.56 206.776 435.572 191.284 424.243 178.081C414.66 166.913 403.421 158.685 389.251 154.817C371.024 149.84 352.448 149.987 333.953 152.657C322.393 154.327 310.8 156.505 299.607 159.772C288.975 162.875 278.785 167.557 268.523 171.835C265.361 173.152 262.133 174.955 259.733 177.339C251.664 185.352 248.58 195.295 249.195 206.621C249.74 216.675 255.312 223.216 263.448 227.984C271.385 232.633 280.291 232.965 289.309 232.74ZM685.651 470.804C686.069 472.576 684.664 474.289 682.847 474.165C682.836 474.165 682.827 474.164 682.816 474.164C676.847 473.739 676.811 473.167 675.735 467.349C673.761 456.673 671.779 445.937 668.749 435.532C663.743 418.335 654.043 404.787 636.755 397.572C629.831 394.681 622.992 393.453 616.076 396.299C606.22 400.352 599.103 412.289 600.488 423.104C601.529 431.235 603.331 439.364 605.753 447.197C608.631 456.505 612.472 465.613 611.624 475.536C610.76 485.635 609.461 495.727 607.748 505.717C604.301 525.821 601.632 545.996 604.064 566.359C605.221 576.044 609.88 584.328 617.62 590.927C624.188 596.525 631.677 596.909 639.433 596.379C653.491 595.416 666.72 587.632 672.655 573.828C678.904 559.291 681.883 544.136 681.284 528.349C681.152 524.892 681.065 517.56 684.609 519.375C685.763 519.964 686.432 521.244 686.347 522.537C685.993 527.709 685.845 532.956 685.279 538.088C684.709 543.237 683.092 564.992 683.857 571.119C684.653 577.48 686.519 583.513 689.015 589.408C691.604 595.524 696.028 599.812 701.475 602.939C721.259 614.296 739.755 603.163 749.588 585.973C761.637 564.912 760.957 541.503 760.033 518.185C759.479 504.173 759.008 490.129 759.345 476.121C759.755 459.097 761.747 442.096 761.769 425.083C761.791 408.979 756.752 394.704 742.771 384.543C733.685 377.94 723.841 375.921 713.171 377.152C701.569 378.492 690.709 383.508 683.783 392.357C672.924 406.227 675.393 418.455 675.875 421.148C677.583 430.707 679.003 440.32 680.872 449.847C682.225 456.739 683.936 463.561 685.651 470.804ZM156.1 273.669C156.091 273.675 156.081 273.663 156.088 273.656C162.559 266.749 169.933 261.115 178.839 257.351C190.527 252.409 202.149 247.204 213.357 241.275C223.388 235.968 231.105 227.877 235.875 217.389C237.296 214.264 237.779 210.717 239.153 207.564C242.112 200.777 243.339 194.089 240.983 186.725C237.373 175.449 227.525 167.311 217.893 167.028C209.073 166.769 199.997 168.601 191.353 170.779C181.135 173.352 171.139 176.965 161.267 180.711C149.648 185.119 137.808 189.291 126.877 195.095C105.055 206.683 88.8625 224.008 80.5265 247.529C76.8885 257.796 74.4328 268.659 72.938 279.457C71.4661 290.091 70.7844 301.091 71.7932 311.736C72.8057 322.423 76.2833 332.883 78.7708 343.421C81.9921 357.069 89.5803 368.352 98.6344 378.669C108.523 389.937 120.653 398.339 134.321 404.407C140.364 407.089 146.512 409.909 152.908 411.343C163.937 413.815 175.227 415.597 186.547 413.125C193.999 411.497 201.744 410.237 208.613 407.152C218.339 402.783 227.865 397.581 236.595 391.476C250.12 382.016 262.396 371.485 270.967 356.469C280.493 339.779 278.391 313.376 261.857 300.433C248.263 289.791 230.539 289.872 217.28 296.992C209.923 300.943 203.069 305.976 196.443 311.107C186.161 319.068 174.681 324.265 162.243 327.613C161.403 327.84 160.543 327.992 159.692 328.179C159.435 327.783 159.179 327.387 158.921 326.992C165.393 321.283 171.741 315.427 178.369 309.904C185.877 303.648 193.393 297.497 197.612 288.317C200.235 282.611 200.863 276.244 198.74 270.884C194.24 259.513 183.824 258.255 174.169 262.948C167.892 266 162.104 270.057 156.1 273.669ZM614.357 219.811C614.357 219.809 614.357 219.808 614.359 219.808C614.72 219.72 613.865 194.975 611.569 182.923C609.156 170.255 603.712 158.524 596.724 147.473C585.659 129.976 569.696 119.667 550.023 115.148C540.121 112.875 529.817 111.605 519.663 111.383C507.699 111.12 495.556 111.556 483.756 113.391C471.141 115.353 458.831 119.281 446.403 122.408C436.811 125.343 432.348 131.845 429.048 137.643C422.991 148.283 421.032 159.669 424.517 171.133C428.428 183.996 438.369 191.097 451.359 193.973C453.893 194.535 457.504 194.308 458.667 195.883C459.911 197.571 458.841 200.959 458.795 203.604C458.519 219.348 458.465 235.101 457.849 250.832C457.643 256.108 456.357 261.425 454.928 266.547C453.292 272.404 450.845 278.031 448.932 283.817C446.811 290.229 445.413 296.933 442.745 303.096C439.939 309.581 439.821 316.268 441.915 322.276C447.385 337.98 459.22 345.748 475.381 346.924C483.248 347.496 491.196 347.175 499.099 346.963C503.569 346.843 508.077 346.409 512.475 345.605C518.871 344.436 525.168 342.743 531.533 341.393C534.931 340.673 538.543 340.665 541.769 339.521C547.195 337.599 552.388 335.021 557.683 332.728C569.027 327.816 578.088 320.076 585.699 310.435C594.709 299.019 600.733 286.135 605.891 272.6C610.635 260.151 613.277 247.411 614.297 234.261C614.669 229.472 614.357 224.628 614.357 219.811ZM768.179 300.512C768.183 300.504 768.196 300.505 768.196 300.515C768.192 303.959 767.751 307.936 768.287 311.777C769.461 320.179 771.097 328.517 772.62 336.868C774.903 349.377 779.779 361.021 786.595 371.547C795.043 384.591 805.081 396.196 818.509 404.937C835.319 415.879 853.381 419.844 872.067 414.041C895.836 406.659 911.068 389.652 916.651 365.145C919.669 351.899 916.573 338.807 912.224 326.253C910.104 320.132 906.612 314.46 903.477 308.728C902.121 306.249 900.419 303.981 898.451 301.955C891.993 295.307 885.148 289.025 878.82 282.259C872.74 275.757 868.549 268.035 866.272 259.379C865.795 257.564 865.408 255.584 865.652 253.771C865.812 252.581 866.975 251.072 868.072 250.604C868.96 250.224 870.811 250.829 871.537 251.631C873.212 253.473 874.155 256.113 875.112 258.299C877.341 263.387 879.331 268.572 881.477 273.696C885.628 283.599 897.404 294.891 903.619 298.399L903.621 298.4C908.487 299.961 913.079 299.919 917.953 299.452C926.915 298.593 934.191 294.719 939.752 287.735C948.601 276.619 948.788 263.459 948.032 250.241C947.249 236.544 942.453 224.111 935.328 212.46C929.236 202.501 921.319 194.199 911.996 187.4C889.197 169.453 857.631 180.564 853.732 182.24C842.26 187.169 833.868 195.761 827.621 206.569C821.672 216.865 816.521 227.392 816.613 239.637C816.639 243.109 816.919 246.643 817.628 250.033C818.801 255.649 819.469 261.66 822.035 266.637C828.259 278.711 835.483 290.268 842.244 302.069C845.439 307.645 848.692 313.207 851.476 318.988C852.181 320.453 853.439 322.635 850.984 324.64C848.529 326.644 850.979 324.648 850.973 324.645C849.572 325.58 847.384 324.949 845.692 322.703C844.001 320.457 839.303 314.347 836.597 309.86C829.115 297.451 821.792 284.941 814.549 272.389C810.768 265.839 804.603 263.609 797.772 263.395C789.343 263.131 782.217 266.685 775.876 274.065C775.869 274.072 775.86 274.067 775.861 274.059C776.339 271.096 776.532 269.388 776.896 267.717C779.264 256.84 782.531 246.076 783.868 235.076C786.064 217.021 785.011 199.132 776.863 182.253C772.243 172.681 761.311 165.856 751.407 167.099C734.512 169.219 727.947 180.5 724.623 196.044C722.421 206.337 722.272 217.053 720.561 227.476C719.709 232.667 714.311 232.112 714.573 228.159C715.056 220.877 715.684 213.603 715.992 206.315C716.543 193.272 714.739 180.7 707.023 169.716C698.588 157.709 682.704 151.316 668.372 156.608C654.555 161.708 643.783 170.888 635.605 183.263C630.565 190.887 627.403 199.304 626.911 208.092C626.413 216.967 627.517 226.071 629.013 234.888C631.696 250.695 638.559 265.056 647.175 278.38C653.492 288.148 661.423 296.703 672.351 301.808C674.889 302.995 679.349 305.381 681.549 306.572C682.733 307.212 683.583 308.411 683.585 309.757C683.591 311.755 681.573 313.528 670.781 308.789L670.78 308.788C666.515 306.432 662.103 303.723 658.935 300.127C652.8 293.161 646.291 286.903 637.572 283.487C628.829 280.063 620.108 280.8 612.372 286.021C598.908 295.108 596.671 309.78 597.273 323.947C597.839 337.232 602.152 350.02 611.629 360.74C620.128 370.353 629.936 377.671 642.064 380.876C657.973 385.081 674.132 384.431 690.135 380.112C702.483 376.779 713.872 371.288 724.091 363.905C737.879 353.944 749.047 341.273 756.871 326.067C761.147 317.756 764.479 308.961 768.179 300.512ZM0 288.984V288.983C0.0348959 260.047 4.25625 231.64 10.8193 203.692C14.5787 187.684 19.7855 171.792 26.3683 156.735C33.3573 140.747 42.7516 125.812 51.0855 110.412C64.7765 85.1119 82.9391 63.5186 105.732 46.0386C109.737 42.9666 113.872 40.1186 118.118 37.4692C130.857 29.5199 144.597 23.3573 158.824 18.3146C186.671 8.44527 215.232 1.05991 244.855 0.190582C265.884 -0.426752 287.025 0.486608 308.031 1.9506C333.283 3.70794 358.485 6.42258 383.629 9.39592C401.055 11.4559 418.345 14.6586 435.699 17.3412C461.877 21.3906 488.001 25.8639 514.255 29.3546C541.525 32.9812 568.908 35.7919 596.275 38.6359C602.491 39.2826 608.847 38.6813 615.135 38.5119C667.065 37.1133 718.864 38.8306 770.299 46.4733C793.727 49.9546 817.045 54.2626 839.073 63.7519C855.719 70.9226 871.023 80.3132 885.587 90.8959C895.729 98.2666 905.703 106.007 914.905 114.499C922.749 121.736 929.475 130.179 936.747 138.051C940.016 141.591 943.52 144.904 947.148 148.076C965.308 163.961 982.128 181.212 996.081 200.847C1007.14 216.407 1016.84 232.843 1025.1 250.267C1035.84 272.937 1043.07 296.601 1048.91 320.769C1055.89 349.671 1059.57 379.129 1056.24 408.752C1053.67 431.673 1048.67 454.323 1044.71 477.085C1041.49 495.605 1036.67 513.685 1028.34 530.604C1019.12 549.34 1009.85 568.127 997.109 584.807C990.033 594.067 982.353 602.884 974.643 611.633C958.521 629.929 939.951 645.688 919.684 658.941C892.703 676.585 864.115 690.9 832.139 698.361C802.097 705.37 772.027 707.937 741.464 705.567C708.428 703.007 676.56 695.665 645.851 682.746C619.167 671.521 594.487 656.761 569.525 642.421C550.168 631.3 529.135 626.516 507.055 625.284C483.288 623.957 460.039 627.809 436.82 631.969C407.057 637.303 377.145 638.405 347.123 635.004C317.052 631.597 287.717 624.753 259.285 614.4C243.079 608.5 226.824 602.543 211.189 595.315C191.847 586.373 173.004 576.261 155.857 563.425C142.315 553.285 128.631 543.264 115.792 532.276C105.177 523.191 95.2645 513.169 85.8469 502.828C75.7464 491.737 65.9573 480.243 57.2021 468.081C54.064 463.723 51.0959 459.228 48.2541 454.647C43.5713 447.096 39.2307 439.311 35.0328 431.507C29.2645 420.784 24.1557 409.712 19.8197 398.333C10.9068 374.944 4.14375 350.937 2.45781 325.756C1.63697 313.499 0.819271 301.241 0 288.984Z" fill="#F08EB4"/>
+                        <path d="M515.744 262.307C516.308 255.176 517.241 243.195 517.372 240.913C517.501 238.632 517.993 231.54 517.588 226.913C517.189 222.357 519.432 219.631 522.776 217.611C526.229 215.525 529.899 213.711 533.653 212.231C539.039 210.105 542.016 211.504 543.775 216.961C546.968 226.876 542.7 239.344 538.867 244.269C531.713 255.095 515.431 264.939 515.744 262.307Z" fill="#F08EB4"/>
+                        <path d="M354.263 284.541C353.619 285.009 352.705 284.565 352.659 283.771C352.26 277.055 351.913 270.843 351.496 264.635C351.303 261.763 350.655 260.516 350.536 256.073C350.416 251.629 351.48 245.595 355.768 242.553C359.796 239.696 364.017 236.476 369.424 236.243C374.831 236.008 376.705 239.507 377.695 244.341C378.456 248.06 378.96 252.443 377.719 255.853C373.327 267.925 364.835 276.823 354.263 284.541Z" fill="#F08EB4"/>
+                      </g>
+                    </g>
+                    <defs><clipPath id="lc"><rect width="1058" height="707" fill="white"/></clipPath></defs>
+                  </svg>
+                </div>
+                <div class="kh-rechts">
+                  <div class="kh-top">
+                    <span class="afhaal-label">Bezorging</span>
+                    <button class="min-btn" onclick="verklein()">−</button>
+                  </div>
+                  <div class="afhaal-tijd">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#F08EB4" stroke-width="1.6"/><path d="M8 4.5 L8 8 L10.5 10" stroke="#F08EB4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div>
+                      <div class="at-label" id="afhaalLabel">Verwachte tijd</div>
+                      <div class="at-tijd" id="afhaaltijd">–</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stap-icoon-groot">
+                <div class="sug-icoon" id="stapIcoon"></div>
+                <div class="sug-tekst">
+                  <div class="sug-titel" id="statusNaam">–</div>
+                </div>
+              </div>
+
+              <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
+              <div class="stappen-rij" id="stappenRij"></div>
+
+              <!-- WhatsApp -->
+              <div class="whatsapp-sectie">
+                <div class="wa-label">Bij vragen? Neem gerust contact op.</div>
+                <a class="wa-knop" href="https://wa.me/31600000000?text=Hallo%2C%20ik%20heb%20een%20vraag%20over%20mijn%20bezorging%20bij%20Eddy%27s%20Sushi." target="_blank">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#F08EB4">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /bottom-area -->
+
+        <div class="home-bar"></div>
+      </div><!-- /lock-screen -->
+
+      <!-- Review overlay (binnen het telefoonscherm) -->
+      <div class="review-overlay" id="reviewOverlay">
+        <div class="review-kaart">
+          <button class="rv-sluiten" onclick="sluitReview()">✕</button>
+          <div class="rv-logo">
+            <svg width="82" height="55" viewBox="0 0 1058 707" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#rc)">
+                <mask id="rm" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1058" height="707">
+                  <path d="M1057.48 0H0V706.427H1057.48V0Z" fill="white"/>
+                </mask>
+                <g mask="url(#rm)">
+                  <path d="M47.636 211.081C90.7656 129.268 196.244 109.691 268.871 96.2093C412.399 69.568 446.069 125.695 639.015 106.845C725.94 98.3534 745.52 84.3813 798.559 97.2733C867.359 113.996 951.488 165.961 988.948 261.072C1034.53 376.8 980.495 478.92 965.548 504.643C959.343 515.324 896.389 620.024 779.413 642.915C690.621 660.291 674.324 610.252 531.588 601.433C416.789 594.341 400.817 625.071 310.352 605.688C278.873 598.943 200.505 581.139 134.853 517.407C61.4364 446.137 -4.24895 309.503 47.636 211.081Z" fill="white"/>
+                  <path d="M795.565 181.888C797.897 182.843 799.593 184.891 800.133 187.351C800.44 188.747 800.66 190.272 800.521 191.764C800.044 196.897 798.596 201.949 797.424 207.005C796.085 212.785 799.709 218.432 804.583 217.251C808.383 216.328 812.953 214.893 815.225 212.097C820.473 205.639 825.421 198.624 828.885 191.096C835.544 176.628 838.224 161.755 832.112 145.852C826.796 132.023 806.487 118.939 791.335 128.841C788.441 130.732 785.895 133.143 783.083 135.169C769.741 144.787 770.148 168.707 784.844 177.095C788.013 178.904 791.468 180.213 795.565 181.888ZM802.147 615.205C804.733 614.858 807.369 614.729 809.896 614.131C826.313 610.246 835.552 598.369 842.083 584.08C850.685 565.256 849.669 545.231 847.62 525.367C846.552 515.008 844.4 504.712 842.039 494.549C838.545 479.521 837.051 464.069 830.228 449.743C824.785 438.312 818.143 428.1 808.34 420.305C802.952 416.02 796.644 413.265 789.064 414.068C775.387 415.519 766.495 429.668 767.343 440.972C768.189 452.277 769.095 463.579 770.025 474.877C770.752 483.711 771.593 492.533 772.315 501.368C772.752 506.717 773.568 512.103 773.304 517.427C772.883 525.949 771.541 534.423 770.899 542.94C770.349 550.213 770.467 557.54 769.872 564.809C769.12 573.993 769.572 583.012 772.405 591.809C777.185 606.651 788.941 615.541 802.147 615.205ZM290.3 584.927H290.301C297.657 584.301 305.472 583.232 312.947 579.172C330.041 569.887 337.897 555.111 338.987 536.528C339.54 527.077 337.129 518.037 331.681 509.721C323.941 497.907 314.28 488.777 300.925 483.859C290.617 480.063 281.243 474.777 273.715 466.655C272.067 464.876 270.373 462.685 269.876 460.427C269.416 458.343 269.971 454.364 271.075 453.963C273.241 453.175 276.643 453.519 278.528 454.835C280.596 456.279 282.064 459.181 282.855 461.739C285.145 469.14 290.205 473.443 297.185 475.989C299.245 476.741 301.233 477.693 303.293 478.447C312.709 481.891 324.524 476.745 328.641 467.499C333.011 457.688 331.997 447.731 328.003 438.396C322.673 425.943 314.4 415.429 302.637 408.275C294.2 403.143 285.389 400.109 275.284 399.279C268.841 398.748 255.537 401.496 254.953 401.709C251.104 403.124 248.095 404.264 244.625 406.607C235.301 412.904 229.524 418.988 226.995 428.105C222.551 444.131 222.328 460.052 231.883 475.372C235.591 481.316 239.879 485.379 245.465 488.772C248.093 490.368 250.961 491.653 253.34 493.555C258.34 497.555 263.621 501.416 267.731 506.235C270.028 508.929 270.625 513.373 271.127 517.144C271.308 518.507 269.24 521.02 267.713 521.516C266.197 522.009 263.627 521.12 262.321 519.945C260.548 518.349 258.868 516.068 258.316 513.797C255.439 501.967 247.139 494.968 236.808 490.504C225.572 485.651 215.141 487.844 209.66 499.947C206.865 506.12 208.343 512.157 209.741 517.871C214.295 536.48 225.019 551.495 239.279 563.924C253.629 576.433 270.16 584.191 290.3 584.927ZM417.669 399C411.527 399.82 410.127 400.457 405.072 404.637C400.247 408.627 397.327 414.492 396.637 420.679C396.631 420.744 396.624 420.811 396.616 420.876C395.863 428.121 396.113 435.516 396.44 442.82C397.144 458.553 398.405 474.263 398.996 489.999C399.259 497.011 398.06 504.013 394.112 510.088C391.82 513.616 389.483 514.869 386.819 508.625C381.164 495.367 385.072 480.977 387.507 467.169C389.56 455.528 392.325 444.025 391.233 431.94C389.903 417.221 382.347 405.1 365.584 402.315C357.851 401.029 346.652 406.937 345.705 415.943C345.084 421.84 343.476 427.627 342.695 433.513C341.093 445.581 339.409 457.657 338.44 469.784C337.935 476.116 339.076 482.563 339.117 488.959C339.232 507.141 342.867 524.749 348.063 542.02C350.608 550.484 354.149 558.795 360.661 565.148C373.977 578.139 390.039 583.103 408.543 581.584C432.439 579.622 447.84 565.976 457.639 545.575C464.349 531.603 467.697 516.467 464.92 500.735C462.528 487.191 460.46 473.527 456.929 460.268C453.052 445.712 447.073 431.717 443.144 417.172C440.535 407.511 433.984 401.332 424.131 399.151C422.815 398.86 419.635 398.737 417.669 399ZM595.721 535.268C595.641 533.612 595.564 531.969 595.485 530.315C594.968 527.165 594.553 523.987 593.629 520.963C588.021 502.601 577.276 488.859 559.213 480.792C546.845 475.268 537.175 465.895 529.791 454.495C529.611 454.217 529.487 453.904 529.405 453.563C528.404 449.392 531.376 446.904 535.292 448.653C535.604 448.792 535.884 448.964 536.127 449.181C539.359 452.079 542.009 455.671 544.664 459.156C550.989 467.463 558.175 474.072 567.953 478.919C580.6 485.185 596.564 471.984 597.98 461.195C599.663 448.383 596.891 436.637 590.273 425.5C585.828 418.016 580.663 411.213 573.601 406.3C566.869 401.616 559.392 396.86 552.473 392.423C536.939 383.027 511.281 382.589 493.277 387.844C482.583 391.363 477.157 400.943 471.919 409.972C467.429 417.709 465.889 426.46 468.42 435.253C470.051 440.924 472.159 446.62 475.071 451.724C480.169 460.661 487.295 468.008 496.367 473.02C506.553 478.648 516.295 484.803 523.689 493.932C526.125 496.939 528.095 500.529 529.377 504.171C529.983 505.885 529.089 509.228 527.713 510.213C526.463 511.109 522.936 510.551 521.653 509.329C518.749 506.567 516.265 503.201 514.231 499.719C509.492 491.612 503.408 484.863 495.764 479.432C483.905 471.008 471.351 481.833 469.517 491.832C467.079 505.124 470.504 518.076 476.392 529.948C482.377 542.019 489.736 553.185 500.368 562.156C512.321 572.241 525.003 579.781 540.863 581.697C554.349 583.327 566.567 580.005 576.571 571.609C587.692 562.276 594.705 550.212 595.721 535.268ZM289.309 232.74C289.313 232.74 289.317 232.743 289.317 232.747C291.003 248.857 292.764 264.34 294.151 279.856C294.535 284.149 293.985 288.561 293.551 292.888C292.404 304.281 285.788 326.713 285.689 326.988C282.524 335.747 284.424 343.308 290.632 350.184C297.896 358.227 307.261 361.195 317.553 361.493C322.795 361.645 328.108 360.685 333.328 359.847C344.116 358.115 355.237 357.283 365.529 353.947C377.823 349.961 389.563 344.092 401.236 338.409C417.472 330.505 428.256 317.171 435.669 301.069C441.392 288.641 444.855 275.572 446.8 261.932C448.668 248.829 447.936 235.988 445.167 223.301C441.56 206.776 435.572 191.284 424.243 178.081C414.66 166.913 403.421 158.685 389.251 154.817C371.024 149.84 352.448 149.987 333.953 152.657C322.393 154.327 310.8 156.505 299.607 159.772C288.975 162.875 278.785 167.557 268.523 171.835C265.361 173.152 262.133 174.955 259.733 177.339C251.664 185.352 248.58 195.295 249.195 206.621C249.74 216.675 255.312 223.216 263.448 227.984C271.385 232.633 280.291 232.965 289.309 232.74ZM685.651 470.804C686.069 472.576 684.664 474.289 682.847 474.165C682.836 474.165 682.827 474.164 682.816 474.164C676.847 473.739 676.811 473.167 675.735 467.349C673.761 456.673 671.779 445.937 668.749 435.532C663.743 418.335 654.043 404.787 636.755 397.572C629.831 394.681 622.992 393.453 616.076 396.299C606.22 400.352 599.103 412.289 600.488 423.104C601.529 431.235 603.331 439.364 605.753 447.197C608.631 456.505 612.472 465.613 611.624 475.536C610.76 485.635 609.461 495.727 607.748 505.717C604.301 525.821 601.632 545.996 604.064 566.359C605.221 576.044 609.88 584.328 617.62 590.927C624.188 596.525 631.677 596.909 639.433 596.379C653.491 595.416 666.72 587.632 672.655 573.828C678.904 559.291 681.883 544.136 681.284 528.349C681.152 524.892 681.065 517.56 684.609 519.375C685.763 519.964 686.432 521.244 686.347 522.537C685.993 527.709 685.845 532.956 685.279 538.088C684.709 543.237 683.092 564.992 683.857 571.119C684.653 577.48 686.519 583.513 689.015 589.408C691.604 595.524 696.028 599.812 701.475 602.939C721.259 614.296 739.755 603.163 749.588 585.973C761.637 564.912 760.957 541.503 760.033 518.185C759.479 504.173 759.008 490.129 759.345 476.121C759.755 459.097 761.747 442.096 761.769 425.083C761.791 408.979 756.752 394.704 742.771 384.543C733.685 377.94 723.841 375.921 713.171 377.152C701.569 378.492 690.709 383.508 683.783 392.357C672.924 406.227 675.393 418.455 675.875 421.148C677.583 430.707 679.003 440.32 680.872 449.847C682.225 456.739 683.936 463.561 685.651 470.804ZM156.1 273.669C156.091 273.675 156.081 273.663 156.088 273.656C162.559 266.749 169.933 261.115 178.839 257.351C190.527 252.409 202.149 247.204 213.357 241.275C223.388 235.968 231.105 227.877 235.875 217.389C237.296 214.264 237.779 210.717 239.153 207.564C242.112 200.777 243.339 194.089 240.983 186.725C237.373 175.449 227.525 167.311 217.893 167.028C209.073 166.769 199.997 168.601 191.353 170.779C181.135 173.352 171.139 176.965 161.267 180.711C149.648 185.119 137.808 189.291 126.877 195.095C105.055 206.683 88.8625 224.008 80.5265 247.529C76.8885 257.796 74.4328 268.659 72.938 279.457C71.4661 290.091 70.7844 301.091 71.7932 311.736C72.8057 322.423 76.2833 332.883 78.7708 343.421C81.9921 357.069 89.5803 368.352 98.6344 378.669C108.523 389.937 120.653 398.339 134.321 404.407C140.364 407.089 146.512 409.909 152.908 411.343C163.937 413.815 175.227 415.597 186.547 413.125C193.999 411.497 201.744 410.237 208.613 407.152C218.339 402.783 227.865 397.581 236.595 391.476C250.12 382.016 262.396 371.485 270.967 356.469C280.493 339.779 278.391 313.376 261.857 300.433C248.263 289.791 230.539 289.872 217.28 296.992C209.923 300.943 203.069 305.976 196.443 311.107C186.161 319.068 174.681 324.265 162.243 327.613C161.403 327.84 160.543 327.992 159.692 328.179C159.435 327.783 159.179 327.387 158.921 326.992C165.393 321.283 171.741 315.427 178.369 309.904C185.877 303.648 193.393 297.497 197.612 288.317C200.235 282.611 200.863 276.244 198.74 270.884C194.24 259.513 183.824 258.255 174.169 262.948C167.892 266 162.104 270.057 156.1 273.669ZM614.357 219.811C614.357 219.809 614.357 219.808 614.359 219.808C614.72 219.72 613.865 194.975 611.569 182.923C609.156 170.255 603.712 158.524 596.724 147.473C585.659 129.976 569.696 119.667 550.023 115.148C540.121 112.875 529.817 111.605 519.663 111.383C507.699 111.12 495.556 111.556 483.756 113.391C471.141 115.353 458.831 119.281 446.403 122.408C436.811 125.343 432.348 131.845 429.048 137.643C422.991 148.283 421.032 159.669 424.517 171.133C428.428 183.996 438.369 191.097 451.359 193.973C453.893 194.535 457.504 194.308 458.667 195.883C459.911 197.571 458.841 200.959 458.795 203.604C458.519 219.348 458.465 235.101 457.849 250.832C457.643 256.108 456.357 261.425 454.928 266.547C453.292 272.404 450.845 278.031 448.932 283.817C446.811 290.229 445.413 296.933 442.745 303.096C439.939 309.581 439.821 316.268 441.915 322.276C447.385 337.98 459.22 345.748 475.381 346.924C483.248 347.496 491.196 347.175 499.099 346.963C503.569 346.843 508.077 346.409 512.475 345.605C518.871 344.436 525.168 342.743 531.533 341.393C534.931 340.673 538.543 340.665 541.769 339.521C547.195 337.599 552.388 335.021 557.683 332.728C569.027 327.816 578.088 320.076 585.699 310.435C594.709 299.019 600.733 286.135 605.891 272.6C610.635 260.151 613.277 247.411 614.297 234.261C614.669 229.472 614.357 224.628 614.357 219.811ZM768.179 300.512C768.183 300.504 768.196 300.505 768.196 300.515C768.192 303.959 767.751 307.936 768.287 311.777C769.461 320.179 771.097 328.517 772.62 336.868C774.903 349.377 779.779 361.021 786.595 371.547C795.043 384.591 805.081 396.196 818.509 404.937C835.319 415.879 853.381 419.844 872.067 414.041C895.836 406.659 911.068 389.652 916.651 365.145C919.669 351.899 916.573 338.807 912.224 326.253C910.104 320.132 906.612 314.46 903.477 308.728C902.121 306.249 900.419 303.981 898.451 301.955C891.993 295.307 885.148 289.025 878.82 282.259C872.74 275.757 868.549 268.035 866.272 259.379C865.795 257.564 865.408 255.584 865.652 253.771C865.812 252.581 866.975 251.072 868.072 250.604C868.96 250.224 870.811 250.829 871.537 251.631C873.212 253.473 874.155 256.113 875.112 258.299C877.341 263.387 879.331 268.572 881.477 273.696C885.628 283.599 897.404 294.891 903.619 298.399L903.621 298.4C908.487 299.961 913.079 299.919 917.953 299.452C926.915 298.593 934.191 294.719 939.752 287.735C948.601 276.619 948.788 263.459 948.032 250.241C947.249 236.544 942.453 224.111 935.328 212.46C929.236 202.501 921.319 194.199 911.996 187.4C889.197 169.453 857.631 180.564 853.732 182.24C842.26 187.169 833.868 195.761 827.621 206.569C821.672 216.865 816.521 227.392 816.613 239.637C816.639 243.109 816.919 246.643 817.628 250.033C818.801 255.649 819.469 261.66 822.035 266.637C828.259 278.711 835.483 290.268 842.244 302.069C845.439 307.645 848.692 313.207 851.476 318.988C852.181 320.453 853.439 322.635 850.984 324.64C848.529 326.644 850.979 324.648 850.973 324.645C849.572 325.58 847.384 324.949 845.692 322.703C844.001 320.457 839.303 314.347 836.597 309.86C829.115 297.451 821.792 284.941 814.549 272.389C810.768 265.839 804.603 263.609 797.772 263.395C789.343 263.131 782.217 266.685 775.876 274.065C775.869 274.072 775.86 274.067 775.861 274.059C776.339 271.096 776.532 269.388 776.896 267.717C779.264 256.84 782.531 246.076 783.868 235.076C786.064 217.021 785.011 199.132 776.863 182.253C772.243 172.681 761.311 165.856 751.407 167.099C734.512 169.219 727.947 180.5 724.623 196.044C722.421 206.337 722.272 217.053 720.561 227.476C719.709 232.667 714.311 232.112 714.573 228.159C715.056 220.877 715.684 213.603 715.992 206.315C716.543 193.272 714.739 180.7 707.023 169.716C698.588 157.709 682.704 151.316 668.372 156.608C654.555 161.708 643.783 170.888 635.605 183.263C630.565 190.887 627.403 199.304 626.911 208.092C626.413 216.967 627.517 226.071 629.013 234.888C631.696 250.695 638.559 265.056 647.175 278.38C653.492 288.148 661.423 296.703 672.351 301.808C674.889 302.995 679.349 305.381 681.549 306.572C682.733 307.212 683.583 308.411 683.585 309.757C683.591 311.755 681.573 313.528 670.781 308.789L670.78 308.788C666.515 306.432 662.103 303.723 658.935 300.127C652.8 293.161 646.291 286.903 637.572 283.487C628.829 280.063 620.108 280.8 612.372 286.021C598.908 295.108 596.671 309.78 597.273 323.947C597.839 337.232 602.152 350.02 611.629 360.74C620.128 370.353 629.936 377.671 642.064 380.876C657.973 385.081 674.132 384.431 690.135 380.112C702.483 376.779 713.872 371.288 724.091 363.905C737.879 353.944 749.047 341.273 756.871 326.067C761.147 317.756 764.479 308.961 768.179 300.512ZM0 288.984V288.983C0.0348959 260.047 4.25625 231.64 10.8193 203.692C14.5787 187.684 19.7855 171.792 26.3683 156.735C33.3573 140.747 42.7516 125.812 51.0855 110.412C64.7765 85.1119 82.9391 63.5186 105.732 46.0386C109.737 42.9666 113.872 40.1186 118.118 37.4692C130.857 29.5199 144.597 23.3573 158.824 18.3146C186.671 8.44527 215.232 1.05991 244.855 0.190582C265.884 -0.426752 287.025 0.486608 308.031 1.9506C333.283 3.70794 358.485 6.42258 383.629 9.39592C401.055 11.4559 418.345 14.6586 435.699 17.3412C461.877 21.3906 488.001 25.8639 514.255 29.3546C541.525 32.9812 568.908 35.7919 596.275 38.6359C602.491 39.2826 608.847 38.6813 615.135 38.5119C667.065 37.1133 718.864 38.8306 770.299 46.4733C793.727 49.9546 817.045 54.2626 839.073 63.7519C855.719 70.9226 871.023 80.3132 885.587 90.8959C895.729 98.2666 905.703 106.007 914.905 114.499C922.749 121.736 929.475 130.179 936.747 138.051C940.016 141.591 943.52 144.904 947.148 148.076C965.308 163.961 982.128 181.212 996.081 200.847C1007.14 216.407 1016.84 232.843 1025.1 250.267C1035.84 272.937 1043.07 296.601 1048.91 320.769C1055.89 349.671 1059.57 379.129 1056.24 408.752C1053.67 431.673 1048.67 454.323 1044.71 477.085C1041.49 495.605 1036.67 513.685 1028.34 530.604C1019.12 549.34 1009.85 568.127 997.109 584.807C990.033 594.067 982.353 602.884 974.643 611.633C958.521 629.929 939.951 645.688 919.684 658.941C892.703 676.585 864.115 690.9 832.139 698.361C802.097 705.37 772.027 707.937 741.464 705.567C708.428 703.007 676.56 695.665 645.851 682.746C619.167 671.521 594.487 656.761 569.525 642.421C550.168 631.3 529.135 626.516 507.055 625.284C483.288 623.957 460.039 627.809 436.82 631.969C407.057 637.303 377.145 638.405 347.123 635.004C317.052 631.597 287.717 624.753 259.285 614.4C243.079 608.5 226.824 602.543 211.189 595.315C191.847 586.373 173.004 576.261 155.857 563.425C142.315 553.285 128.631 543.264 115.792 532.276C105.177 523.191 95.2645 513.169 85.8469 502.828C75.7464 491.737 65.9573 480.243 57.2021 468.081C54.064 463.723 51.0959 459.228 48.2541 454.647C43.5713 447.096 39.2307 439.311 35.0328 431.507C29.2645 420.784 24.1557 409.712 19.8197 398.333C10.9068 374.944 4.14375 350.937 2.45781 325.756C1.63697 313.499 0.819271 301.241 0 288.984Z" fill="#F08EB4"/>
+                  <path d="M515.744 262.307C516.308 255.176 517.241 243.195 517.372 240.913C517.501 238.632 517.993 231.54 517.588 226.913C517.189 222.357 519.432 219.631 522.776 217.611C526.229 215.525 529.899 213.711 533.653 212.231C539.039 210.105 542.016 211.504 543.775 216.961C546.968 226.876 542.7 239.344 538.867 244.269C531.713 255.095 515.431 264.939 515.744 262.307Z" fill="#F08EB4"/>
+                  <path d="M354.263 284.541C353.619 285.009 352.705 284.565 352.659 283.771C352.26 277.055 351.913 270.843 351.496 264.635C351.303 261.763 350.655 260.516 350.536 256.073C350.416 251.629 351.48 245.595 355.768 242.553C359.796 239.696 364.017 236.476 369.424 236.243C374.831 236.008 376.705 239.507 377.695 244.341C378.456 248.06 378.96 252.443 377.719 255.853C373.327 267.925 364.835 276.823 354.263 284.541Z" fill="#F08EB4"/>
+                </g>
+              </g>
+              <defs><clipPath id="rc"><rect width="1058" height="707" fill="white"/></clipPath></defs>
+            </svg>
+          </div>
+          <div class="rv-titel">Heeft je geluksmoment gesmaakt?</div>
+          <div class="rv-sushi-rij">
+            <span class="rv-sushi" onclick="kiesSushi(1)">🍣</span>
+            <span class="rv-sushi" onclick="kiesSushi(2)">🍣</span>
+            <span class="rv-sushi" onclick="kiesSushi(3)">🍣</span>
+            <span class="rv-sushi" onclick="kiesSushi(4)">🍣</span>
+            <span class="rv-sushi" onclick="kiesSushi(5)">🍣</span>
+          </div>
+          <div class="rv-tags">
+            <button class="rv-tag" onclick="toggleTag(this)">Snelle bezorging</button>
+            <button class="rv-tag" onclick="toggleTag(this)">Super vers</button>
+            <button class="rv-tag" onclick="toggleTag(this)">Goede kwaliteit</button>
+            <button class="rv-tag" onclick="toggleTag(this)">Vriendelijke service</button>
+          </div>
+          <textarea class="rv-tekstveld" id="rvTekst" placeholder="Schrijf hier uw toelichting... (optioneel)"></textarea>
+          <button class="rv-verstuur" onclick="verstuurReview()">Claim mijn verrassing</button>
+          <div class="rv-social"><span class="rv-social-tekst">Sluit aan bij de 10.000+ vijfsterrenbeoordelingen</span></div>
+          <div id="rvBedankt" style="display:none">
+            <div class="rv-bedankt-tekst">De sushichef bedankt je voor je feedback!</div>
+            <div class="rv-code-wrap">
+              <div class="rv-code-label">Jouw kortingscode — gratis rol</div>
+              <div class="rv-code" id="rvCode">—</div>
+              <div class="rv-code-desc">Gebruik deze code bij je volgende bestelling bij Eddy's Sushi</div>
+            </div>
+            <div class="rv-timer" id="rvTimer"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /telefoon-scherm -->
+  </div><!-- /telefoon -->
+</div><!-- /pagina -->
+
+<script>
+  /* ── Iconen ── */
+  const ICOON_ONTVANGEN = `<svg viewBox="0 0 56 56" fill="none"><rect x="10" y="8" width="36" height="42" rx="5" fill="#fce8f1" stroke="#F08EB4" stroke-width="2"/><rect x="18" y="18" width="20" height="2.5" rx="1.25" fill="#F08EB4"/><rect x="18" y="24" width="20" height="2.5" rx="1.25" fill="#F08EB4" opacity="0.6"/><rect x="18" y="30" width="13" height="2.5" rx="1.25" fill="#F08EB4" opacity="0.35"/><circle cx="28" cy="42" r="5" fill="rgba(240,142,180,0.18)"/><path d="M25.5 42 L27.5 44 L31 40" stroke="#F08EB4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const ICOON_BEREID    = `<svg viewBox="0 0 56 56" fill="none"><ellipse cx="28" cy="35" rx="18" ry="8" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.8"/><rect x="10" y="35" width="36" height="5" rx="2.5" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.8"/><circle cx="21" cy="33" r="3.5" fill="#F08EB4" opacity="0.65"/><circle cx="28" cy="31.5" r="4" fill="#F08EB4" opacity="0.85"/><circle cx="35" cy="33" r="3.5" fill="#F08EB4" opacity="0.65"/><path d="M20 19 C20 14 24 12 28 12 C32 12 36 14 36 19" stroke="#F08EB4" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>`;
+  const ICOON_BIJNA     = `<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="18" fill="#fce8f1" stroke="#F08EB4" stroke-width="2"/><path d="M28 16 L28 28 L37 34" stroke="#F08EB4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="28" r="2.8" fill="#F08EB4"/><circle cx="28" cy="11.5" r="1.8" fill="#F08EB4" opacity="0.35"/><circle cx="28" cy="44.5" r="1.8" fill="#F08EB4" opacity="0.35"/><circle cx="11.5" cy="28" r="1.8" fill="#F08EB4" opacity="0.35"/><circle cx="44.5" cy="28" r="1.8" fill="#F08EB4" opacity="0.35"/></svg>`;
+  const ICOON_VERPAKT   = `<svg viewBox="0 0 56 56" fill="none"><defs><linearGradient id="kg2" x1="10" y1="22" x2="46" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E8B84B" stop-opacity="0.35"/><stop offset="100%" stop-color="#9B6E18" stop-opacity="0.18"/></linearGradient></defs><rect x="10" y="22" width="36" height="28" rx="4" fill="#D4A455"/><rect x="10" y="22" width="36" height="28" rx="4" fill="url(#kg2)"/><rect x="10" y="22" width="36" height="7" fill="#C49040"/><rect x="10" y="22" width="36" height="3" fill="#B8852E"/><path d="M18 22 C17 13 22 9 28 9 C34 9 39 13 38 22" stroke="#8B6318" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="37" rx="12" ry="9" fill="white" opacity="0.95"/><ellipse cx="28" cy="37" rx="9" ry="7" fill="#F08EB4" opacity="0.85"/><path d="M23 35.5 Q28 33.5 33 35.5" stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M22.5 37.5 Q28 35.5 33.5 37.5" stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M23 39.5 Q28 37.5 33 39.5" stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>`;
+  const ICOON_KLAAR     = `<svg viewBox="0 0 56 56" fill="none"><rect x="5" y="34" width="46" height="14" rx="5" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.5"/><rect x="14" y="27" width="28" height="11" rx="3" fill="rgba(240,142,180,0.15)" stroke="#F08EB4" stroke-width="1.5"/><rect x="21" y="17" width="14" height="14" rx="2.5" fill="#D4A455"/><rect x="21" y="17" width="14" height="4" fill="#C49040"/><path d="M25 17 C25 13 31 13 31 17" stroke="#8B6318" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="43" cy="17" r="9" fill="#F08EB4"/><path d="M38.5 17 L41.5 20 L47.5 13" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const ICOON_GENIET    = `<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="30" r="18" fill="#fce8f1" stroke="#F08EB4" stroke-width="2"/><circle cx="23" cy="27" r="2.5" fill="#F08EB4"/><circle cx="33" cy="27" r="2.5" fill="#F08EB4"/><path d="M21 33 Q28 39 35 33" stroke="#F08EB4" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M9 10 L10 14 L14 14 L11 16.5 L12.5 21 L9 18.5 L5.5 21 L7 16.5 L4 14 L8 14 Z" fill="#F08EB4" opacity="0.6"/><path d="M47 7 L48 10 L51 10 L48.5 12 L49.5 15 L47 13.5 L44.5 15 L45.5 12 L43 10 L46 10 Z" fill="#F08EB4" opacity="0.5"/><circle cx="12" cy="36" r="2.5" fill="#F08EB4" opacity="0.35"/><circle cx="44" cy="40" r="2" fill="#F08EB4" opacity="0.3"/></svg>`;
+  const ICOON_SCOOTER   = `<svg viewBox="0 0 56 56" fill="none"><circle cx="12" cy="38" r="7" fill="#fce8f1" stroke="#F08EB4" stroke-width="2"/><circle cx="12" cy="38" r="3" fill="#F08EB4"/><circle cx="44" cy="38" r="7" fill="#fce8f1" stroke="#F08EB4" stroke-width="2"/><circle cx="44" cy="38" r="3" fill="#F08EB4"/><path d="M19 38 L37 38" stroke="#F08EB4" stroke-width="2"/><path d="M32 38 L28 24 L20 24 L18 32 L32 32 Z" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.8" stroke-linejoin="round"/><path d="M28 24 L34 24 L38 32 L32 32" fill="#fce8f1" stroke="#F08EB4" stroke-width="1.8" stroke-linejoin="round"/><path d="M38 32 L44 32" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/><rect x="19" y="26" width="8" height="6" rx="1.5" fill="#F08EB4" opacity="0.5"/><path d="M12 31 L12 28 L15 26" stroke="#F08EB4" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
+  const DOT_TAS  = `<svg viewBox="0 0 18 18" width="13" height="13" fill="none"><rect x="2" y="7" width="14" height="10" rx="2" fill="#D4A455"/><rect x="2" y="7" width="14" height="3" fill="#C49040"/><path d="M5.5 7 C5 3.5 13 3.5 12.5 7" stroke="#8B6318" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="9" cy="13" rx="4" ry="2.8" fill="white" opacity="0.9"/><ellipse cx="9" cy="13" rx="2.8" ry="1.9" fill="#F08EB4" opacity="0.85"/></svg>`;
+  const DOT_VINK = `<svg viewBox="0 0 18 18" width="12" height="12" fill="none"><path d="M3.5 9 L7.5 13 L14.5 5" stroke="#F08EB4" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const DOT_STER = `<svg viewBox="0 0 18 18" width="12" height="12" fill="none"><path d="M9 2 L10.5 6.5 L15.5 6.5 L11.5 9.5 L13 14 L9 11 L5 14 L6.5 9.5 L2.5 6.5 L7.5 6.5 Z" fill="#F08EB4"/></svg>`;
+
+  const STAPPEN = [
+    { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: 'Bestelling ontvangen',            sub: 'We hebben uw bestelling goed ontvangen.' },
+    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Bestelling wordt bereid',          sub: 'Onze chef is druk bezig met uw sushi!' },
+    { icoonDot: '⏰',     icoonGroot: ICOON_BIJNA,     kort: 'Bijna klaar',  vol: 'Bestelling is bijna klaar',        sub: 'Nog even geduld, bijna klaar...' },
+    { icoonDot: DOT_TAS,  icoonGroot: ICOON_VERPAKT,   kort: 'Verpakt',      vol: 'Bestelling wordt verpakt',         sub: 'Bijna tijd om te komen afhalen!' },
+    { icoonDot: DOT_VINK, icoonGroot: ICOON_SCOOTER,    kort: 'Onderweg',     vol: 'Onderweg',                         sub: 'Uw bestelling wordt nu bezorgd.' },
+    { icoonDot: DOT_STER, icoonGroot: ICOON_GENIET,    kort: 'Opgehaald',    vol: 'Geniet van je geluksmoment',       sub: 'Smakelijk! Wij wensen u veel smaak.' },
+  ];
+  const VOORTGANG = [0, 20, 40, 60, 80, 100];
+
+  let huidigStatus = 0;
+  let isGeminimaliseerd = false;
+  let gekozenSterren = 0;
+  let delayMinuten = 0;
+  let reviewSluitTimer = null;
+
+  function genereerCode() {
+    const tekens = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let c = 'SUSHI-';
+    for (let i = 0; i < 6; i++) c += tekens[Math.floor(Math.random() * tekens.length)];
+    return c;
+  }
+
+  /* ── Klok ── */
+  function updateKlok() {
+    const nu = new Date();
+    const hh = String(nu.getHours()).padStart(2,'0');
+    const mm = String(nu.getMinutes()).padStart(2,'0');
+    document.getElementById('sbTijd').textContent   = `${hh}:${mm}`;
+    document.getElementById('klokTijd').textContent = `${hh}:${mm}`;
+    const dagen   = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
+    const maanden = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+    document.getElementById('klokDatum').textContent = `${dagen[nu.getDay()]} ${nu.getDate()} ${maanden[nu.getMonth()]}`;
+  }
+  updateKlok(); setInterval(updateKlok, 10000);
+
+  /* ── Afhaaltijd ── */
+  function berekenAfhaaltijd() {
+    const nu = new Date();
+    const s  = new Date(nu.getTime() + 20 * 60000);
+    const e  = new Date(nu.getTime() + 25 * 60000);
+    const f  = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    return `${f(s)} – ${f(e)}`;
+  }
+  document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
+
+  /* ── Trilling ── */
+  function triggerTriling() {
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    const tel = document.getElementById('telefoon');
+    tel.classList.remove('trilt');
+    void tel.offsetWidth;
+    tel.classList.add('trilt');
+    setTimeout(() => tel.classList.remove('trilt'), 600);
+  }
+
+  /* ── Scherm bijwerken ── */
+  function updateScherm() {
+    const stap = STAPPEN[huidigStatus];
+    document.getElementById('stapIcoon').innerHTML    = stap.icoonGroot;
+    document.getElementById('statusNaam').textContent = stap.vol;
+    document.getElementById('voortgangFill').style.width = VOORTGANG[huidigStatus] + '%';
+
+    // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
+    if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
+
+    if (huidigStatus === 4) {
+      document.getElementById('afhaalLabel').textContent = '';
+      document.getElementById('afhaaltijd').textContent  = 'Onderweg';
+    } else if (delayMinuten === 0) {
+      document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
+      document.getElementById('afhaaltijd').textContent  = berekenAfhaaltijd();
+    }
+
+    document.getElementById('stappenRij').innerHTML = STAPPEN.map((s, i) => {
+      const cls = i < huidigStatus ? 'voltooid' : i === huidigStatus ? 'actief' : '';
+      const bol = i < huidigStatus ? '✓' : s.icoonDot;
+      const bolCls = bol.startsWith('<svg') ? '' : '';
+      const el = `<div class="stap-bol ${cls}">${bol}</div>`;
+      return `<div class="stap-item ${cls}">${el}<div class="stap-label">${s.kort}</div></div>`;
+    }).join('');
+
+    updateCompact();
+
+    if (huidigStatus === 4) {
+      document.getElementById('klaarNotif').classList.add('zichtbaar');
+      triggerTriling();
+      if (isGeminimaliseerd) vergroot();
+    }
+    if (huidigStatus === 5) {
+      document.getElementById('klaarNotif').classList.remove('zichtbaar');
+      verklein();
+    }
+  }
+
+  /* ── Compact view ── */
+  function updateCompact() {
+    const stap = STAPPEN[huidigStatus];
+    const compact = document.getElementById('trackingCompact');
+    const icoonEl = document.getElementById('tcIcoon');
+    if (stap.icoonDot.startsWith('<svg')) icoonEl.innerHTML = stap.icoonDot;
+    else icoonEl.textContent = stap.icoonDot;
+    if (huidigStatus === 5) {
+      document.getElementById('tcNaam').textContent = 'Geniet van je geluksmoment!';
+      compact.classList.add('geniet-staat');
+    } else {
+      document.getElementById('tcNaam').textContent = stap.vol;
+      document.getElementById('tcFill').style.width = VOORTGANG[huidigStatus] + '%';
+      compact.classList.remove('geniet-staat');
+    }
+  }
+
+  function verklein() {
+    isGeminimaliseerd = true;
+    document.getElementById('trackingVol').style.display = 'none';
+    document.getElementById('trackingCompact').classList.add('zichtbaar');
+    updateCompact();
+  }
+  function vergroot() {
+    isGeminimaliseerd = false;
+    document.getElementById('trackingVol').style.display = '';
+    document.getElementById('trackingCompact').classList.remove('zichtbaar');
+  }
+
+  /* ── Notificaties ── */
+  function sluitKlaarNotif()      { document.getElementById('klaarNotif').classList.remove('zichtbaar'); }
+  function sluitVertragingNotif() { document.getElementById('vertragingMelding').classList.remove('zichtbaar'); }
+
+  function toonVertraging(min) {
+    delayMinuten = min;
+    document.getElementById('vmDesc').textContent = `Je bestelling is helaas met ${min} ${min === 1 ? 'minuut' : 'minuten'} vertraagd.`;
+    document.getElementById('vertragingMelding').classList.add('zichtbaar');
+    triggerTriling();
+    if (isGeminimaliseerd) vergroot();
+    // Orange state on tracking card + inline rood delay in tijdstekst
+    document.getElementById('trackingVol').classList.add('vertraagd');
+    const basis = berekenAfhaaltijd();
+    document.getElementById('afhaaltijd').innerHTML =
+      `${basis} <span style="color:#dc2626;font-weight:800">+${min} min</span>`;
+    updateScherm();
+  }
+
+  /* ── Review popup ── */
+  function toonReview() {
+    if (reviewSluitTimer) { clearInterval(reviewSluitTimer); reviewSluitTimer = null; }
+    gekozenSterren = 0;
+    document.querySelectorAll('.rv-sushi').forEach(s => s.classList.remove('actief'));
+    document.querySelectorAll('.rv-tag').forEach(t => t.classList.remove('actief'));
+    document.getElementById('rvTekst').value = '';
+    document.getElementById('rvBedankt').style.display    = 'none';
+    document.querySelector('.rv-logo').style.display      = '';
+    document.querySelector('.rv-titel').style.display     = '';
+    document.querySelector('.rv-sushi-rij').style.display = '';
+    document.querySelector('.rv-tags').style.display      = '';
+    document.querySelector('.rv-tekstveld').style.display = '';
+    document.querySelector('.rv-verstuur').style.display  = '';
+    document.querySelector('.rv-social').style.display    = '';
+    document.getElementById('reviewOverlay').classList.add('zichtbaar');
+    triggerTriling();
+    if (isGeminimaliseerd) vergroot();
+  }
+  function sluitReview() {
+    if (reviewSluitTimer) { clearInterval(reviewSluitTimer); reviewSluitTimer = null; }
+    document.getElementById('reviewOverlay').classList.remove('zichtbaar');
+    document.getElementById('trackingVol').style.display = 'none';
+    const compact = document.getElementById('trackingCompact');
+    document.getElementById('tcNaam').textContent = 'Geniet van je geluksmoment!';
+    compact.classList.add('geniet-staat');
+    compact.classList.add('zichtbaar');
+    isGeminimaliseerd = true;
+  }
+  function kiesSushi(val) {
+    gekozenSterren = val;
+    document.querySelectorAll('.rv-sushi').forEach((s, i) => s.classList.toggle('actief', i < val));
+  }
+  function toggleTag(el) { el.classList.toggle('actief'); }
+  function verstuurReview() {
+    if (gekozenSterren === 0) { kiesSushi(5); return; }
+    // Verberg alles boven het bedankbericht
+    document.querySelector('.rv-logo').style.display      = 'none';
+    document.querySelector('.rv-titel').style.display     = 'none';
+    document.querySelector('.rv-sushi-rij').style.display = 'none';
+    document.querySelector('.rv-tags').style.display      = 'none';
+    document.querySelector('.rv-tekstveld').style.display = 'none';
+    document.querySelector('.rv-verstuur').style.display  = 'none';
+    document.querySelector('.rv-social').style.display    = 'none';
+    // Toon bedankscherm met nieuwe code
+    document.getElementById('rvCode').textContent = genereerCode();
+    document.getElementById('rvBedankt').style.display = 'block';
+    // Afteltimer
+    let seconden = 30;
+    const timerEl = document.getElementById('rvTimer');
+    timerEl.textContent = `Sluit automatisch over ${seconden} seconden`;
+    reviewSluitTimer = setInterval(() => {
+      seconden--;
+      timerEl.textContent = `Sluit automatisch over ${seconden} seconden`;
+      if (seconden <= 0) { clearInterval(reviewSluitTimer); reviewSluitTimer = null; sluitReview(); }
+    }, 1000);
+  }
+
+  /* ── Socket.io (werkt tussen apparaten op hetzelfde netwerk) ── */
+  const socket = io();
+  socket.emit('join-order', 'DEMO02');
+
+  socket.on('order-update', (order) => {
+    if (order.status !== huidigStatus) {
+      document.getElementById('vertragingMelding').classList.remove('zichtbaar');
+      document.getElementById('klaarNotif').classList.remove('zichtbaar');
+      document.getElementById('trackingVol').classList.remove('vertraagd');
+      document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
+      delayMinuten = 0;
+      huidigStatus = order.status;
+      updateScherm();
+    }
+  });
+
+  socket.on('delay-notification', ({ minutes }) => {
+    toonVertraging(minutes);
+  });
+
+  socket.on('review-verzoek', () => {
+    toonReview();
+  });
+
+  updateScherm();
+</script>
+</body>
+</html>

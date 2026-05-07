@@ -347,7 +347,7 @@
       <div class="dl-titel">Klantscherm</div>
       <div class="dl-desc">Open het live tracking scherm van de klant</div>
     </div>
-    <a class="dl-link" href="/tracking.html" target="_blank">Openen →</a>
+    <a class="dl-link" id="klantschermLink" href="/tracking.html" target="_blank">Openen →</a>
   </div>
 
   <!-- Demo selector -->
@@ -551,9 +551,15 @@
   let gescand = false;
   let huidigeDemo = 1;
 
+  const TRACKING_URLS = {
+    1: '/tracking.html',
+    2: '/tracking-bezorging.html'
+  };
+
   function wisselDemo(nr) {
     if (huidigeDemo === nr) return;
     huidigeDemo = nr;
+    document.getElementById('klantschermLink').href = TRACKING_URLS[nr];
     huidigStatus = 0;
     gescand = false;
 
