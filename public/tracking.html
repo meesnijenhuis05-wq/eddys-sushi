@@ -235,11 +235,11 @@
     .locatie-knop:active { background: rgba(240,142,180,0.22); }
 
     /* ── Geniet overlay (afhalen, fase 5) ── */
-    .geniet-overlay { position: absolute; inset: 0; background: rgba(255,240,248,0.97); display: none; flex-direction: column; align-items: flex-end; justify-content: flex-end; z-index: 100; }
+    .geniet-overlay { position: absolute; inset: 0; background: transparent; display: none; flex-direction: column; align-items: flex-end; justify-content: flex-end; z-index: 100; }
     .geniet-overlay.zichtbaar { display: flex; animation: fadeIn 0.5s ease; }
     .geniet-kaart { background: white; border-radius: 28px 28px 0 0; padding: 28px 20px 40px; width: 100%; position: relative; overflow: hidden; max-height: 88%; overflow-y: auto; }
+    .geniet-sluiten { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; background: #f0f0f0; border: none; cursor: pointer; font-size: 14px; color: #888; display: flex; align-items: center; justify-content: center; z-index: 3; }
     .confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
-    .confetti-stuk { position: absolute; border-radius: 2px; animation: confettiVal 3s ease-in forwards; }
     @keyframes confettiVal { 0%{ opacity:1;transform:translateY(-10px) rotate(0deg); } 100%{ opacity:0;transform:translateY(450px) rotate(720deg); } }
     .geniet-content { position: relative; z-index: 2; }
     .geniet-titel { font-size: 22px; font-weight: 800; color: #1a1a1a; text-align: center; margin-bottom: 8px; }
@@ -248,13 +248,17 @@
     .geniet-punten-nieuw { font-size: 20px; font-weight: 800; color: #F08EB4; margin-bottom: 4px; }
     .geniet-punten-totaal { font-size: 12px; color: #bbb; }
     .geniet-quote { font-size: 12.5px; color: #888; font-style: italic; line-height: 1.65; margin-bottom: 18px; border-left: 3px solid rgba(240,142,180,0.5); padding-left: 12px; }
-    .geniet-deel-btn { width: 100%; background: linear-gradient(135deg, #F08EB4, #e07aa0); color: white; border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.2px; transition: opacity 0.18s; }
-    .geniet-deel-btn:hover { opacity: 0.88; }
+    .geniet-social-label { font-size: 13px; color: #888; text-align: center; margin-bottom: 12px; }
+    .geniet-social-knoppen { display: flex; gap: 10px; }
+    .geniet-social-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 14px; padding: 13px 8px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; text-decoration: none; transition: opacity 0.18s; }
+    .geniet-social-btn:hover { opacity: 0.88; }
+    .geniet-instagram { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color: white; }
+    .geniet-facebook { background: #1877F2; color: white; }
 
     /* ── Review bedank extras ── */
     .rv-kopieer-btn { background: rgba(240,142,180,0.10); border: 1.5px solid rgba(240,142,180,0.32); color: #F08EB4; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 8px; cursor: pointer; font-family: inherit; transition: background 0.18s; }
     .rv-kopieer-btn:active { background: rgba(240,142,180,0.22); }
-    .rv-geldig { text-align: center; font-size: 10.5px; color: #ccc; margin-top: 4px; margin-bottom: 12px; }
+    .rv-geldig { text-align: center; font-size: 13px; font-weight: 700; color: #F08EB4; margin-top: 6px; margin-bottom: 12px; }
     .rv-deel-btn { width: 100%; background: rgba(240,142,180,0.07); border: 1.5px solid rgba(240,142,180,0.25); color: #F08EB4; border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.18s; margin-top: 8px; }
     .rv-deel-btn:hover { background: rgba(240,142,180,0.14); }
 
@@ -294,7 +298,7 @@
             </div>
             <div class="kn-tekst">
               <div class="kn-titel">Mees, jouw sushi staat klaar!</div>
-              <div class="kn-desc">Kom maar — we wachten op je.</div>
+              <div class="kn-desc">Je geluksmoment staat klaar.</div>
             </div>
             <button class="kn-sluiten" onclick="sluitKlaarNotif()">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
@@ -314,7 +318,7 @@
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
             </div>
-            <div class="vm-desc">Jouw bestelling loopt iets uit — we hebben iets langer nodig om het perfect te maken.</div>
+            <div class="vm-desc">Jouw bestelling loopt iets uit, we hebben iets langer nodig om het perfect te maken.</div>
             <div class="vm-tijd-wrap" id="vmTijdWrap" style="display:none">
               <div class="vm-tijd-label">Nieuwe tijd</div>
               <div class="vm-tijd-waarde" id="vmTijdWaarde">–</div>
@@ -461,7 +465,7 @@
             </div>
             <div class="rv-timer" id="rvTimer"></div>
             <div class="rv-geldig">Geldig tot: 10 juni 2026</div>
-            <button class="rv-deel-btn" onclick="deelCode()">Deel met vrienden 🍣</button>
+            <button class="rv-deel-btn" onclick="deelCode()">Deel met vrienden</button>
           </div>
         </div>
       </div>
@@ -469,16 +473,21 @@
       <!-- Geniet overlay (afhalen, fase 5) -->
       <div class="geniet-overlay" id="genietOverlay">
         <div class="geniet-kaart">
+          <button class="geniet-sluiten" onclick="sluitGeniet()">✕</button>
           <div class="confetti-wrap" id="confettiWrap"></div>
           <div class="geniet-content">
-            <div class="geniet-titel">Yes, Mees! 🎉</div>
+            <div class="geniet-titel">Yes, Mees!</div>
             <div class="geniet-sub">Jouw geluksmoment is onderweg naar je mond.</div>
             <div class="geniet-punten-wrap">
               <div class="geniet-punten-nieuw">+71 sushipunten</div>
               <div class="geniet-punten-totaal">Totaal: 142 sushipunten</div>
             </div>
             <div class="geniet-quote">"Wij hopen dat elke hap smaakt zoals wij 'm bedoeld hebben. Geniet, Mees."<br>— Team Eddy's Sushi</div>
-            <button class="geniet-deel-btn" onclick="deelOpSocial()">Deel jouw geluksmoment op social media 🍣</button>
+            <div class="geniet-social-label">Deel jouw geluksmoment op social media</div>
+            <div class="geniet-social-knoppen">
+              <a class="geniet-social-btn geniet-instagram" href="https://www.instagram.com/" target="_blank">Instagram</a>
+              <a class="geniet-social-btn geniet-facebook" href="https://www.facebook.com/" target="_blank">Facebook</a>
+            </div>
           </div>
         </div>
       </div>
@@ -502,10 +511,10 @@
 
   const STAPPEN = [
     { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: 'Eddy heeft jouw bestelling!',      sub: 'We gaan nu voor je aan de slag, Mees.' },
-    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Eddy rolt nu jouw rollen',          sub: 'Verse rijst, strak gerold — bijna klaar.' },
+    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Eddy rolt nu jouw rollen',          sub: 'Jouw geluksmoment wordt nu gemaakt.' },
     { icoonDot: '⏰',     icoonGroot: ICOON_BIJNA,     kort: 'Bijna klaar',  vol: 'Tijd om te vertrekken!',            sub: '' },
     { icoonDot: DOT_TAS,  icoonGroot: ICOON_VERPAKT,   kort: 'Verpakt',      vol: 'Jouw geluksmoment wordt ingepakt',  sub: 'Bijna klaar om op te halen, Mees.' },
-    { icoonDot: DOT_VINK, icoonGroot: ICOON_KLAAR,     kort: 'Klaar',        vol: 'Jouw geluksmoment wacht!',          sub: 'Kom maar — we wachten op je, Mees.' },
+    { icoonDot: DOT_VINK, icoonGroot: ICOON_KLAAR,     kort: 'Klaar',        vol: 'Jouw geluksmoment wacht!',          sub: 'We wachten op je Mees.' },
     { icoonDot: DOT_STER, icoonGroot: ICOON_GENIET,    kort: 'Opgehaald',    vol: 'Geniet van je geluksmoment',        sub: 'Smakelijk! Wij wensen u veel smaak.' },
   ];
   const VOORTGANG = [0, 20, 40, 60, 80, 100];
@@ -613,24 +622,27 @@
   }
 
   /* ── Geniet overlay ── */
+  let genietSluitTimer = null;
   function toonGenietOverlay() {
     document.getElementById('genietOverlay').classList.add('zichtbaar');
     maakConfetti();
     setTimeout(() => { document.getElementById('confettiWrap').innerHTML = ''; }, 3500);
+    if (genietSluitTimer) clearTimeout(genietSluitTimer);
+    genietSluitTimer = setTimeout(sluitGeniet, 30000);
+  }
+  function sluitGeniet() {
+    document.getElementById('genietOverlay').classList.remove('zichtbaar');
+    if (genietSluitTimer) { clearTimeout(genietSluitTimer); genietSluitTimer = null; }
   }
   function maakConfetti() {
     const wrap = document.getElementById('confettiWrap');
     wrap.innerHTML = '';
-    const kleuren = ['#F08EB4','#FFD6E7','#FF6B9D','#ffd700','#a8e6cf','#dcd3ff','#ffb3ba'];
-    for (let i = 0; i < 55; i++) {
-      const s = document.createElement('div');
-      s.className = 'confetti-stuk';
-      s.style.cssText = `left:${Math.random()*100}%;top:${-10-Math.random()*30}px;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;background:${kleuren[Math.floor(Math.random()*kleuren.length)]};animation-delay:${Math.random()*1.5}s;animation-duration:${2+Math.random()*1.5}s;`;
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('span');
+      s.textContent = '🍣';
+      s.style.cssText = `position:absolute;font-size:${16+Math.random()*14}px;left:${Math.random()*100}%;top:${-20-Math.random()*30}px;animation:confettiVal ${2+Math.random()*1.5}s ease-in forwards;animation-delay:${Math.random()*1.5}s;`;
       wrap.appendChild(s);
     }
-  }
-  function deelOpSocial() {
-    if (navigator.share) navigator.share({ title: "Eddy's Sushi", text: 'Ik geniet van een geluksmoment bij Eddy\'s Sushi! 🍣' });
   }
 
   /* ── Compact view ── */
