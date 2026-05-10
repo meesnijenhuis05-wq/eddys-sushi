@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestellingsbevestiging – Eddy's Sushi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f0eeec;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1a1a;
+      padding: 48px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .email-wrap { max-width: 600px; margin: 0 auto; }
+
+    .preheader { display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f0eeec; }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(155deg, #F08EB4 0%, #e87daa 55%, #d96899 100%);
+      border-radius: 22px 22px 0 0;
+      padding: 26px 36px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 340px 160px at 50% -15%, rgba(255,255,255,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 200px 100px at 90% 110%, rgba(255,255,255,0.08) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* rij 1: microcopy */
+    .hero-micro-top {
+      position: relative; z-index: 1;
+      font-size: 13px; font-weight: 800; color: #fff;
+      text-align: center;
+      margin-bottom: 18px;
+      letter-spacing: 0.1px;
+    }
+
+    /* rij 2: logo links + badge rechts */
+    .hero-logo-rij {
+      position: relative; z-index: 1;
+      display: flex; align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .logo-kaart {
+      background: #fff;
+      border-radius: 14px;
+      padding: 7px 10px;
+      display: inline-flex; align-items: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      flex-shrink: 0;
+    }
+    .logo-kaart img { display: block; }
+    .hero-badge-tekst {
+      font-size: 13px; font-weight: 700; color: #fff;
+      text-align: left; line-height: 1.4;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.30);
+      border-radius: 10px;
+      padding: 8px 14px;
+      white-space: nowrap;
+    }
+
+    /* rij 3: headline */
+    .hero-headline {
+      position: relative; z-index: 1;
+      font-size: 28px; font-weight: 800; color: #fff;
+      line-height: 1.12; letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    /* rij 4: subline */
+    .hero-subline {
+      position: relative; z-index: 1;
+      font-size: 14.5px; color: rgba(255,255,255,0.88);
+      line-height: 1.55; font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    /* rij 5: transparantie */
+    .hero-transparantie {
+      position: relative; z-index: 1;
+      font-size: 12.5px; color: rgba(255,255,255,0.72);
+      font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    /* rij 6: live tracking CTA */
+    .hero-bottom-rij {
+      position: relative; z-index: 1;
+    }
+    .hero-tracking-knop {
+      display: block; text-align: center; text-decoration: none;
+      background: #fff;
+      color: #d45c8a; font-size: 14px; font-weight: 800;
+      border-radius: 12px; padding: 13px 20px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .hero-tracking-knop span { font-size: 16px; margin-left: 6px; }
+
+    /* bouncing pijl */
+    .hero-pijl {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 18px; gap: 3px;
+    }
+    .hero-pijl svg {
+      animation: heroBounce 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+    }
+    @keyframes heroBounce {
+      0%, 100% { transform: translateY(0); opacity: 0.9; }
+      50%       { transform: translateY(8px); opacity: 0.55; }
+    }
+    /* Aanpassing 7: CSS animatie — oriëntatierefleks verhoogt kijktijd (Litmus +26%) */
+    @keyframes heroBalkFill {
+      from { width: 30%; }
+      to   { width: 88%; }
+    }
+    .hero-anim-balk {
+      height: 100%; background: rgba(255,255,255,0.95); border-radius: 20px;
+      animation: heroBalkFill 2s ease-in-out infinite alternate;
+      width: 60%; /* Outlook fallback: statisch 60% */
+    }
+
+    /* ── ORDERNUMMER ── */
+    .order-banner {
+      background: #1a1a1a;
+      padding: 16px 44px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ob-links { }
+    .ob-label { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 3px; }
+    .ob-nr { font-size: 18px; font-weight: 800; color: #F08EB4; letter-spacing: 2px; }
+    .ob-badge {
+      font-size: 12px; font-weight: 700; color: #fff;
+      background: rgba(240,142,180,0.18); border: 1px solid rgba(240,142,180,0.32);
+      padding: 6px 14px; border-radius: 20px; white-space: nowrap;
+    }
+
+    /* ── BODY ── */
+    .body { background: #fff; }
+
+    /* ── PROGRESS PRINCIPLE ── */
+    .progress-blok {
+      background: linear-gradient(135deg, #fff5f9 0%, #fff 100%);
+      border: 1.5px solid rgba(240,142,180,0.25);
+      border-radius: 16px;
+      padding: 18px 22px;
+      margin: 0 30px;
+      position: relative;
+    }
+    .pb-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .pb-titel { font-size: 14px; font-weight: 800; color: #1a1a1a; }
+    .pb-stap {
+      font-size: 11px; font-weight: 700; color: #F08EB4;
+      background: rgba(240,142,180,0.10);
+      border: 1px solid rgba(240,142,180,0.25);
+      border-radius: 20px; padding: 3px 10px;
+    }
+    .pb-balk-wrap {
+      background: rgba(240,142,180,0.12);
+      border-radius: 20px; height: 10px;
+      overflow: hidden; margin-bottom: 10px;
+    }
+    .pb-balk-fill {
+      height: 100%; width: 45%;
+      background: linear-gradient(90deg, #F08EB4, #e07aa0);
+      border-radius: 20px;
+      position: relative;
+    }
+    .pb-balk-fill::after {
+      content: '';
+      position: absolute; right: 0; top: 0; bottom: 0;
+      width: 18px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45));
+      border-radius: 0 20px 20px 0;
+    }
+    .pb-sub {
+      font-size: 12.5px; color: #777; font-weight: 500;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .pb-sub-tekst { color: #555; }
+    .pb-live-link {
+      font-size: 14px; font-weight: 800; color: #fff;
+      text-decoration: none;
+      background: linear-gradient(135deg, #F08EB4, #e07aa0);
+      border-radius: 10px; padding: 7px 16px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(240,142,180,0.35);
+    }
+
+    /* ── GREETING ── */
+    .greeting-sectie {
+      padding: 28px 44px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .greeting-naam {
+      font-size: 20px; font-weight: 800; color: #1a1a1a;
+      margin-bottom: 10px; line-height: 1.2;
+    }
+    .greeting-naam span { color: #F08EB4; }
+    .greeting-tekst {
+      font-size: 14.5px; color: #444; line-height: 1.65;
+    }
+    .greeting-tekst strong { color: #F08EB4; font-weight: 700; }
+
+    /* kwaliteits-badges rij */
+    .kwaliteit-rij {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .kw-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 700; color: #d45c8a;
+      background: rgba(240,142,180,0.08);
+      border: 1.5px solid rgba(240,142,180,0.22);
+      border-radius: 20px;
+      padding: 5px 12px;
+    }
+
+    /* ── SECTIE BASIS ── */
+    .sectie { padding: 30px 44px; }
+    .sectie + .sectie { border-top: 1px solid #f0f0f0; }
+    .sectie-label {
+      font-size: 10px; font-weight: 700; color: #F08EB4;
+      text-transform: uppercase; letter-spacing: 1.8px;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sectie-label::after { content: ''; flex: 1; height: 1px; background: rgba(240,142,180,0.20); }
+
+    /* ── BESTELLING ── */
+    .product-lijst { display: flex; flex-direction: column; gap: 12px; }
+    .product-kaart {
+      display: flex; align-items: center; gap: 14px;
+      background: #fafafa; border: 1.5px solid #f0f0f0;
+      border-radius: 14px; padding: 10px 14px 10px 10px;
+      position: relative;
+    }
+    .product-foto {
+      width: 76px; height: 76px; border-radius: 10px;
+      object-fit: cover; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(240,142,180,0.12), rgba(255,235,245,0.6));
+    }
+    .product-info { flex: 1; min-width: 0; }
+    .product-naam { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 3px; }
+    .product-omsch { font-size: 12px; color: #aaa; line-height: 1.4; }
+
+    /* prijs + aantal */
+    .product-prijs-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; white-space: nowrap; }
+    .product-qty { font-size: 11px; font-weight: 600; color: #bbb; }
+    .product-prijs-kolom { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .product-prijs-oud { font-size: 11px; font-weight: 400; color: #ccc; text-decoration: line-through; }
+    .product-prijs { font-size: 13px; font-weight: 400; color: #2ea06b; }
+    .euro { font-size: 11px; color: #bbb; }
+
+    /* 2. Social proof badge */
+    .chef-badge {
+      position: absolute; top: 10px; right: 14px;
+      font-size: 9.5px; font-weight: 700;
+      color: #fff; background: #F08EB4;
+      border-radius: 20px; padding: 3px 11px;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* 4. Gratis extras */
+    .gratis-rij {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(46,160,107,0.06);
+      border: 1.5px dashed rgba(46,160,107,0.28);
+      border-radius: 10px; padding: 8px 14px;
+      margin-top: 4px;
+    }
+    .gratis-lbl { font-size: 14px; color: #2ea06b; font-weight: 700; }
+    .gratis-val { font-size: 14px; color: #2ea06b; font-weight: 800; }
+
+    .totaal-wrap { margin-top: 14px; border-top: 1.5px solid #f0f0f0; padding-top: 14px; }
+    .totaal-rij-inner { display: flex; justify-content: space-between; padding: 4px 0; }
+    .totaal-rij-inner .lbl { font-size: 13px; color: #999; }
+    .totaal-rij-inner .val { font-size: 13px; color: #999; }
+    .totaal-rij-inner.korting .lbl { color: #2ea06b; font-weight: 600; }
+    .totaal-rij-inner.korting .val { color: #2ea06b; font-weight: 700; }
+    /* 1. Totaal: zwart i.p.v. roze */
+    .totaal-rij-inner.hoofd .lbl { font-size: 16px; font-weight: 800; color: #1a1a1a; }
+    .totaal-rij-inner.hoofd .val { font-size: 18px; font-weight: 800; color: #1a1a1a; }
+
+    /* 6. Spaarpunten */
+    .spaarpunten-rij {
+      margin-top: 12px;
+      margin-left: -14px; margin-right: -14px;
+      background: rgba(240,142,180,0.07);
+      border: 1.5px solid rgba(240,142,180,0.20);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 12px; color: #c0608a; font-weight: 600;
+      line-height: 1.6; white-space: nowrap;
+    }
+
+    /* ── AFHAAL INFO GRID ── */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .info-blok {
+      border-radius: 14px; padding: 18px 16px;
+      border: 1.5px solid #eeeeee; background: #fafafa;
+    }
+    .info-blok.roze {
+      background: rgba(240,142,180,0.05);
+      border-color: rgba(240,142,180,0.22);
+    }
+    .ib-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+    .ib-lbl { font-size: 10px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; }
+    .ib-val { font-size: 14px; font-weight: 700; color: #1a1a1a; line-height: 1.4; }
+    .ib-sub { font-size: 12px; color: #aaa; margin-top: 3px; }
+
+    /* ── TRACKING CTA ── */
+    .tracking-sectie {
+      padding: 36px 44px 38px;
+      background: linear-gradient(160deg, rgba(240,142,180,0.05) 0%, rgba(255,240,248,0.4) 100%);
+      border-top: 1px solid #f0f0f0;
+      text-align: center;
+    }
+    .tracking-kop { font-size: 20px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; }
+    .tracking-sub {
+      font-size: 14px; color: #666; line-height: 1.65;
+      max-width: 420px; margin: 0 auto 10px;
+    }
+    /* Gekromde pijl */
+    .pijl-wrap {
+      margin: 4px auto 18px;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .pijl-tekst {
+      font-size: 13px; color: #F08EB4; font-weight: 700;
+      font-style: italic;
+    }
+    .pijl-svg { display: block; }
+
+    /* Aanpassing 2: Hick's Law — primaire CTA krijgt meer visueel gewicht */
+    .cta-knop {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #F08EB4 0%, #e07aa0 100%);
+      color: #ffffff; text-decoration: none;
+      font-size: 18px; font-weight: 800;
+      padding: 18px 40px; border-radius: 14px;
+      letter-spacing: 0.2px; min-height: 56px;
+      box-shadow: 0 8px 28px rgba(240,142,180,0.38);
+    }
+    .cta-url {
+      display: block; margin-top: 14px;
+      font-size: 11px; color: #ccc; word-break: break-all;
+    }
+
+    /* ── SUPPORT SECTIE ── */
+    .support-sectie {
+      padding: 32px 44px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .support-kop { font-size: 17px; font-weight: 800; color: #1a1a1a; margin-bottom: 10px; }
+    .support-tekst { font-size: 14px; color: #555; line-height: 1.72; margin-bottom: 20px; }
+    .support-tekst a { color: #F08EB4; font-weight: 700; text-decoration: none; }
+    .contact-rij { display: flex; gap: 10px; flex-wrap: wrap; }
+    .contact-blok {
+      flex: 1; min-width: 150px;
+      border: 1.5px solid #eeeeee; border-radius: 12px;
+      padding: 15px 14px; background: #fafafa;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .cb-icon { font-size: 22px; flex-shrink: 0; }
+    .cb-lbl { font-size: 10px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .cb-val { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+
+    /* ── AFSLUITING ── */
+    .afsluiting {
+      padding: 30px 44px 36px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .afs-tekst { font-size: 15px; color: #444; line-height: 1.72; margin-bottom: 24px; }
+    .afs-tekst strong { color: #1a1a1a; }
+    .afs-handtekening { display: flex; align-items: center; gap: 16px; }
+    .afs-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #F08EB4, #e07aa0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(240,142,180,0.30);
+    }
+    .afs-naam { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .afs-functie { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .afs-tagline {
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px dashed rgba(240,142,180,0.25);
+      font-size: 13px; color: #F08EB4; font-weight: 700;
+      font-style: italic; text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── USP TOP BALK ── */
+    .usp-balk {
+      background: linear-gradient(90deg, rgba(240,142,180,0.18) 0%, #fff 14%, #fff 86%, rgba(240,142,180,0.18) 100%);
+      border: 1.5px solid rgba(240,142,180,0.22);
+      border-bottom: none;
+      border-radius: 14px 14px 0 0;
+      padding: 11px 24px;
+      display: flex; justify-content: center; align-items: center;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .usp-item {
+      font-size: 12px; color: #555; font-weight: 500;
+      display: flex; align-items: center; gap: 4px;
+      text-align: center; line-height: 1.4;
+    }
+    .usp-item strong { color: #F08EB4; font-weight: 800; }
+    .usp-sep { color: rgba(240,142,180,0.40); font-size: 16px; font-weight: 300; }
+
+    /* ── SOCIAL PROOF BAND ── */
+    .social-band {
+      background: #1a1a1a;
+      padding: 18px 44px;
+      display: flex; justify-content: center; align-items: center;
+      gap: 6px; flex-wrap: wrap;
+    }
+    .sp-item {
+      font-size: 12px; color: rgba(255,255,255,0.45);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .sp-item strong { color: #F08EB4; }
+    .sp-sep { color: rgba(255,255,255,0.18); font-size: 14px; }
+
+    /* ── SURPRISE BLOCK ── */
+    .surprise-blok {
+      margin: 0 30px 24px;
+      background: linear-gradient(135deg, #fff5f9, #fff);
+      border: 1.5px dashed rgba(240,142,180,0.40);
+      border-radius: 16px;
+      padding: 20px 22px;
+      text-align: center;
+    }
+    .sb-titel {
+      font-size: 15px; font-weight: 800; color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .sb-titel span { color: #F08EB4; }
+    .sb-tekst {
+      font-size: 13.5px; color: #666; line-height: 1.6; font-weight: 400;
+    }
+    .sb-tekst strong { color: #1a1a1a; font-weight: 700; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #f0eeec;
+      border-radius: 0 0 22px 22px;
+      padding: 28px 44px;
+      text-align: center;
+    }
+    .footer-links { margin-bottom: 14px; }
+    .footer-links a {
+      font-size: 12px; color: #aaa; text-decoration: none;
+      margin: 0 10px; font-weight: 500;
+    }
+    .footer-adres { font-size: 12px; color: #bbb; line-height: 1.8; }
+    .footer-adres strong { color: #999; }
+
+    /* ── LEVEL CARD (Cialdini #5) ── */
+    .level-card {
+      margin-top: 16px;
+      background: #fff;
+      border: 1.5px solid #FFD6E7;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .level-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .level-lbl { font-size: 11px; font-weight: 700; color: #F08EB4; text-transform: uppercase; letter-spacing: 1.2px; }
+    .level-naam { font-size: 13px; font-weight: 800; color: #1a1a1a; }
+    .level-balk-wrap { background: #f0f0f0; border-radius: 20px; height: 8px; overflow: hidden; margin-bottom: 7px; }
+    .level-balk-fill { height: 100%; width: 71%; background: linear-gradient(90deg, #F08EB4, #e07aa0); border-radius: 20px; }
+    .level-punten-rij { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .level-links { font-size: 12px; font-weight: 700; color: #1a1a1a; }
+    .level-rechts { font-size: 12px; color: #1a1a1a; font-weight: 700; }
+    .level-warning { font-size: 11.5px; color: #c0608a; font-weight: 600; }
+
+    /* ── UNITY BLOCK (Cialdini #7) ── */
+    .unity-blok {
+      background: #fff;
+      border: 2px solid #FF6B9D;
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 0 30px;
+      text-align: center;
+    }
+    .unity-accent { height: 4px; background: #FF6B9D; border-radius: 16px 16px 0 0; }
+    .unity-inner { padding: 20px 24px; }
+    .unity-emoji { font-size: 32px; margin-bottom: 8px; display: block; }
+    .unity-kop { font-size: 20px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; line-height: 1.3; }
+    .unity-kop span { color: #FF6B9D; }
+    .unity-tekst { font-size: 14px; color: #666; line-height: 1.65; font-style: italic; }
+
+    /* ── REFERRAL BLOCK (Cialdini #4) ── */
+    .referral-blok {
+      padding: 32px 44px;
+      background: #FFF0F5;
+      text-align: center;
+      border-top: 1px solid rgba(240,142,180,0.15);
+    }
+    .ref-anchor { font-size: 24px; margin-bottom: 10px; display: block; }
+    .ref-kop { font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; line-height: 1.3; }
+    .ref-tekst { font-size: 13.5px; color: #666; line-height: 1.65; margin-bottom: 10px; max-width: 380px; margin-left: auto; margin-right: auto; }
+    .ref-social { font-size: 12px; color: #F08EB4; font-weight: 700; margin-bottom: 20px; }
+    .ref-knop {
+      display: inline-block;
+      background: #FF6B9D;
+      color: #fff; text-decoration: none;
+      font-size: 14px; font-weight: 800;
+      padding: 13px 28px; border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(255,107,157,0.30);
+      letter-spacing: 0.1px;
+    }
+
+    /* ── PEAK-END FOOTER ── */
+    .peak-eddy {
+      background: #fff;
+      border-top: 1px solid #f0f0f0;
+      overflow: hidden;
+    }
+    .peak-eddy-foto {
+      width: 100%; display: block;
+      height: 220px; object-fit: cover; object-position: center top;
+    }
+    .peak-eddy-info { padding: 22px 44px 28px; }
+    .peak-eddy-naam { font-size: 15px; font-weight: 800; color: #1a1a1a; margin-bottom: 2px; }
+    .peak-eddy-functie { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+    .peak-eddy-quote { font-size: 14px; color: #555; line-height: 1.72; font-style: italic; }
+
+    .peak-review {
+      background: linear-gradient(135deg, #fff5f9 0%, #fff 100%);
+      border-top: 1px solid rgba(240,142,180,0.14);
+      padding: 28px 44px;
+      text-align: center;
+    }
+    .peak-review-sterren { font-size: 22px; letter-spacing: 3px; margin-bottom: 10px; }
+    .peak-review-kop { font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; }
+    .peak-review-sub { font-size: 13px; color: #777; line-height: 1.65; margin-bottom: 18px; max-width: 360px; margin-left: auto; margin-right: auto; }
+    .peak-review-knop {
+      display: inline-block;
+      background: linear-gradient(135deg, #F08EB4, #e07aa0);
+      color: #fff; text-decoration: none;
+      font-size: 13px; font-weight: 800;
+      padding: 11px 24px; border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(240,142,180,0.30);
+    }
+
+    .peak-brand-footer {
+      background: linear-gradient(155deg, #F08EB4 0%, #e87daa 55%, #d96899 100%);
+      border-radius: 0 0 22px 22px;
+      padding: 30px 44px;
+      text-align: center;
+    }
+    .pbf-logo { margin-bottom: 14px; }
+    .pbf-naam { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .pbf-adres { font-size: 12px; color: rgba(255,255,255,0.70); line-height: 1.85; margin-bottom: 16px; }
+    .pbf-tagline { font-size: 17px; color: #fff; font-weight: 700; font-style: italic; margin-bottom: 18px; letter-spacing: 0.2px; }
+    .pbf-unsub { font-size: 11px; color: rgba(255,255,255,0.50); text-decoration: underline; cursor: pointer; }
+
+    @media (max-width: 480px) {
+      .sectie, .greeting-sectie, .tracking-sectie,
+      .support-sectie, .afsluiting,
+      .referral-blok, .peak-eddy, .peak-review, .peak-brand-footer,
+      .unity-blok { padding-left: 24px; padding-right: 24px; }
+      .header { padding: 32px 24px 28px; }
+      .order-banner { padding: 14px 24px; }
+      .social-band { padding: 16px 24px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .header-titel { font-size: 24px; }
+      .contact-rij { flex-direction: column; }
+      .peak-eddy { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="preheader">Eddy is gestart 🍣 Straks ruik je verse rijst, warme tempura en net gesneden zalm — jouw rolls worden nú al bereid.</div>
+
+<div class="email-wrap">
+
+  <!-- ── USP TOP BALK ── -->
+  <div class="usp-balk">
+    <div class="usp-item"><strong>10.000+</strong> tevreden klanten</div>
+    <div class="usp-sep">·</div>
+    <div class="usp-item">Gemiddeld <strong>4,9 <span style="color:#F08EB4;">★</span></strong> op Google</div>
+    <div class="usp-sep">·</div>
+    <div class="usp-item"><strong>Vers bereid</strong> elke dag</div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+
+    <!-- rij 1: microcopy -->
+    <div class="hero-micro-top">👀 Scroll verder en volg jouw geluksmoment stap voor stap</div>
+
+    <!-- rij 2: logo links + badge rechts -->
+    <div class="hero-logo-rij">
+      <div class="logo-kaart">
+        <img src="/logo.svg" width="86" alt="Eddy's Sushi">
+      </div>
+      <div class="hero-badge-tekst">Voor jou,<br>vooruit gedacht</div>
+    </div>
+
+    <!-- rij 3: headline -->
+    <div class="hero-headline">Eddy rolt jouw geluksmoment</div>
+
+    <!-- rij 4: subline -->
+    <div class="hero-subline">Binnenkort geniet je van verse sushi, royale rolls en een zorgeloze avond!</div>
+
+    <!-- Aanpassing 3: Scroll-pijl verwijderd — creëerde affordance mismatch in email context -->
+    <div style="border-bottom: 1px solid rgba(255,255,255,0.30); margin-top: 16px;"></div>
+
+  </div>
+
+  <div class="body">
+
+
+    <!-- ── PERSOONLIJKE BEGROETING ── -->
+    <div class="greeting-sectie">
+      <div class="greeting-naam">Bedankt voor je bestelling, <span>Mees</span>!</div>
+      <div class="greeting-tekst">
+        We gaan voor je aan de slag. Eddy zorgt dat je rollen op dit moment vers en royaal worden klaargemaakt, zodat alles precies op tijd voor je klaarstaat. Tot zo in de zaak!
+      </div>
+    </div>
+
+    <!-- Aanpassing 4: Sympathieprincipe — gezichten van echte mensen bouwen vertrouwen op vóór transactionele content -->
+    <div style="background: #fff; border-top: 1px solid #f0f0f0; overflow: hidden;">
+      <img src="/img/team.jpg" alt="Het team van Eddy's Sushi" style="width: 100%; display: block; height: 220px; object-fit: cover; object-position: center top;">
+    </div>
+
+    <!-- ── BESTELLING ── -->
+    <div class="sectie">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+        <div style="font-size:17px; font-weight:800; color:#F08EB4;">Jouw geluksmoment, zonder zorgen</div>
+        <div style="font-size:12px; font-weight:700; color:#F08EB4; background:rgba(240,142,180,0.10); border:1.5px solid rgba(240,142,180,0.25); border-radius:20px; padding:4px 12px; white-space:nowrap; margin-left:12px; display:inline-flex; align-items:center; gap:5px;">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5.5" stroke="#F08EB4" stroke-width="1.5"/><path d="M7 4V7L9 8.5" stroke="#F08EB4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          18:00 – 18:05
+        </div>
+      </div>
+      <div class="product-lijst">
+
+        <div class="product-kaart">
+          <img class="product-foto" src="/img/chicken-box.jpg" alt="Chicken Halal Box">
+          <div class="product-info">
+            <div class="product-naam">Chicken Halal Box</div>
+            <div class="product-omsch">Krokante kip, malse vulling en 100% halal</div>
+          </div>
+          <div class="product-prijs-wrap">
+            <span class="product-qty">1×</span>
+            <div class="product-prijs-kolom">
+              <span class="product-prijs-oud">€54,95</span>
+              <span class="product-prijs">€49,46</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-kaart">
+          <div class="chef-badge">Populair</div>
+          <img class="product-foto" src="/img/sushi-sandwich.jpg" alt="Sushi Sandwich Mixed Fish">
+          <div class="product-info">
+            <div class="product-naam">Sushi Sandwich Mixed Fish</div>
+            <div class="product-omsch">Zachte zalm, verse tonijn en romige avocado</div>
+          </div>
+          <div class="product-prijs-wrap">
+            <span class="product-qty">1×</span>
+            <div class="product-prijs-kolom">
+              <span class="product-prijs-oud">€10,35</span>
+              <span class="product-prijs">€9,32</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-kaart">
+          <div class="chef-badge">Populair</div>
+          <img class="product-foto" src="/img/dragon-roll.jpg" alt="Dragon Roll">
+          <div class="product-info">
+            <div class="product-naam">Dragon Roll</div>
+            <div class="product-omsch">Een vullend geluksmoment met garnaal en avocado</div>
+          </div>
+          <div class="product-prijs-wrap">
+            <span class="product-qty">1×</span>
+            <div class="product-prijs-kolom">
+              <span class="product-prijs-oud">€13,46</span>
+              <span class="product-prijs">€12,11</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. Gratis extras -->
+      <div class="gratis-rij">
+        <span class="gratis-lbl">Inclusief: stokjes, sojasaus &amp; wasabi</span>
+        <span class="gratis-val">Gratis</span>
+      </div>
+
+      <div class="totaal-wrap">
+        <div class="totaal-rij-inner">
+          <span class="lbl">Subtotaal</span>
+          <span class="val">78,76</span>
+        </div>
+        <div class="totaal-rij-inner korting">
+          <span class="lbl">✓ &nbsp;10% afhaalkorting</span>
+          <span class="val">− 7,88</span>
+        </div>
+        <div class="totaal-rij-inner hoofd" style="margin-top:10px;padding-top:10px;border-top:1.5px solid #f0f0f0;">
+          <span class="lbl">Totaal betaald</span>
+          <span class="val">70,88</span>
+        </div>
+      </div>
+
+      <!-- Cialdini #5 – Level/Punten progress card -->
+      <div style="font-size:15px; font-weight:800; color:#1a1a1a; margin-top:18px; margin-bottom:8px;">Je ontvangt bijna 1 gratis rol 🍣</div>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-lbl">Jouw Sushi Target</span>
+        </div>
+        <div class="level-balk-wrap">
+          <div class="level-balk-fill"></div>
+        </div>
+        <div class="level-punten-rij">
+          <span class="level-links">71 punten</span>
+          <span class="level-rechts">100 punten = 1 gratis rol 🍣</span>
+        </div>
+        <div class="level-warning">Nog maar 29 punten — je bent er bijna! Verloopt op 10 juni, wees er op tijd bij.</div>
+      </div>
+    </div>
+
+
+    <!-- ── TRACKING CTA ── -->
+    <!-- Aanpassing 2: Hick's Law — primaire sectie krijgt meer visueel gewicht via label + grotere knop -->
+    <!-- Aanpassing 1: Pijl + instructietekst verwijderd — affordance mismatch in email context -->
+    <!-- Aanpassing 5: F-patroon scanning — kortere copy = sneller begrip = hogere actiekans -->
+    <div class="tracking-sectie">
+      <div style="font-size: 11px; font-weight: 700; color: #FF6B9D; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Jouw volgende stap</div>
+      <div class="tracking-kop">Volg je geluksmoment live mee</div>
+      <div class="tracking-sub" style="font-size: 15px; color: #555; max-width: 320px; margin: 0 auto 20px; line-height: 1.6;">
+        Volg live hoe Eddy jouw rollen maakt —<br>zodat je precies op tijd vertrekt. Geen giswerk.
+      </div>
+      <!-- Aanpassing 1: Rule of Three vervangt scroll-pointer — bevestigt vertrouwen via drie korte zekerheden -->
+      <div style="font-size: 14px; color: #FF6B9D; font-style: italic; text-align: center; margin-bottom: 16px;">Geen onzekerheid. Altijd vers. Altijd op tijd.</div>
+      <a href="https://eddys-sushi-production.up.railway.app/tracking.html" class="cta-knop">
+        Volg mijn geluksmoment live
+      </a>
+    </div>
+
+    <!-- ── SURPRISE & DELIGHT ── -->
+    <div class="surprise-blok" style="margin: 0 0 0; border-radius:0; border-left:none; border-right:none;">
+      <div class="sb-titel">🎁 Psst, <span>Mees</span>...</div>
+      <div class="sb-tekst">
+        Eddy heeft een kleine verrassing voor je ingepakt.<br>
+        <strong>Spot jij 'm als je je bestelling ophaalt?</strong>
+      </div>
+    </div>
+
+    <!-- ── WHATSAPP ── -->
+    <!-- Aanpassing 2: Hick's Law — secundaire sectie krijgt minder visueel gewicht via grijs label + kleinere knop -->
+    <div style="padding: 8px 44px 16px; text-align: center; background: #FFF0F5; border-top: 1px solid #f0f0f0;">
+      <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Hulp nodig?</div>
+      <div style="font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">Vraag of aanpassing?</div>
+      <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px;">Eddy's team reageert binnen 2 min — gewoon via WhatsApp.</div>
+      <a href="https://wa.me/31612345678" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #FF6B9D; color: #fff; font-size: 15px; font-weight: 800; text-decoration: none; border-radius: 99px; padding: 13px 28px; min-height: 48px; box-shadow: 0 6px 20px rgba(255,107,157,0.30); max-width: 100%;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        App Eddy's team →
+      </a>
+      <div style="margin-top: 10px; font-size: 11px; color: #999;">Gem. reactietijd: 1:43 · Beschikbaar tijdens openingstijden</div>
+    </div>
+
+
+  </div><!-- /body -->
+
+  <!-- ── PEAK-END FOOTER (Aanpassing 6) ── -->
+  <!-- Peak-End Rule: geheugen onthoudt de piek én het einde — identified person effect maakt het einde emotioneel memorabel -->
+
+  <!-- Subblok A: Oprichters sign-off -->
+  <div style="background: #fff; border-top: 1px solid #f0f0f0; overflow: hidden; text-align: center;">
+    <div style="padding: 24px 32px 0;">
+      <img src="/img/oprichters.jpg" alt="Ferry Slijpen & Eddy Siang — Oprichters van Eddy's Sushi" style="width: 100%; display: block; height: 260px; object-fit: cover; object-position: center top; border-radius: 50%;">
+    </div>
+    <div style="padding: 18px 24px 28px;">
+      <div style="font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px;">Oprichters</div>
+      <div style="font-size: 13px; color: #999; margin-bottom: 14px;">Ferry Slijpen &amp; Eddy Siang</div>
+      <div style="font-size: 15px; color: #444; font-style: italic; line-height: 1.6; max-width: 280px; margin: 0 auto;">"Wij doen er alles aan om van jouw diner een royaal verwenmoment te maken, met aandacht voor elke rol. Tot zo!"</div>
+    </div>
+  </div>
+
+
+  <!-- Subblok C: Merkfooter donker -->
+  <div class="peak-brand-footer">
+    <div class="pbf-logo">
+      <img src="/logo.svg" width="120" alt="Eddy's Sushi">
+    </div>
+    <div class="pbf-adres">Winkelveldstraat 21, 5916 NX Venlo<br>06 13890025</div>
+    <div class="pbf-tagline">✨ Samen geluksmomentjes creëren ✨</div>
+    <a href="#" class="pbf-unsub">Uitschrijven</a>
+  </div>
+
+  <!-- ── CHANGELOG ──
+  AANPASSING 1: Gebogen pijl + "Druk hieronder" verwijderd uit tracking — vervangen door italic Rule of Three subkop
+  AANPASSING 2: Visuele hiërarchie hersteld — tracking primair (label + 56px knop 18px), WhatsApp secundair (grijs label + 44px knop)
+  AANPASSING 3: Hero scroll-pijl verwijderd — vervangen door witte horizontale lijn
+  AANPASSING 4: Teamfoto verplaatst van onderaan naar na begroeting, vóór orderoverzicht — nieuwe titel + quote
+  AANPASSING 5: Live tracker copy ingekort van 3 zinnen naar 2 regels max 320px
+  AANPASSING 6: Footer vervangen door 3 subblokken — Eddy sign-off, review trigger, donkere merkfooter
+  AANPASSING 7: CSS animatie toegevoegd in hero — roze balk 30→88% met "Eddy is bezig..." tekst
+  ──>
+
+</div><!-- /email-wrap -->
+</body>
+</html>
