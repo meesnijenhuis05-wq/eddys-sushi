@@ -625,7 +625,7 @@
   function toonGenietOverlay() {
     document.getElementById('genietOverlay').classList.add('zichtbaar');
     maakConfetti();
-    setTimeout(() => { document.getElementById('confettiWrap').innerHTML = ''; }, 3500);
+    setTimeout(() => { document.getElementById('confettiWrap').innerHTML = ''; }, 5500);
     if (genietSluitTimer) clearTimeout(genietSluitTimer);
     genietSluitTimer = setTimeout(sluitGeniet, 30000);
   }
@@ -639,7 +639,7 @@
     for (let i = 0; i < 40; i++) {
       const s = document.createElement('span');
       s.textContent = '🍣';
-      s.style.cssText = `position:absolute;font-size:${16+Math.random()*14}px;left:${Math.random()*100}%;top:${-20-Math.random()*30}px;animation:confettiVal ${2+Math.random()*1.5}s ease-in forwards;animation-delay:${Math.random()*1.5}s;`;
+      s.style.cssText = `position:absolute;font-size:${16+Math.random()*14}px;left:${Math.random()*100}%;top:${-20-Math.random()*30}px;animation:confettiVal ${3+Math.random()*2}s ease-in forwards;animation-delay:${Math.random()*1.5}s;`;
       wrap.appendChild(s);
     }
   }
