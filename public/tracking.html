@@ -234,13 +234,16 @@
     .locatie-knop { display: inline-flex; align-items: center; gap: 6px; background: rgba(240,142,180,0.10); border: 1.5px solid rgba(240,142,180,0.38); border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #F08EB4; cursor: pointer; font-family: inherit; text-decoration: none; transition: background 0.18s; }
     .locatie-knop:active { background: rgba(240,142,180,0.22); }
 
-    /* ── Keuken kaart (fase 1) ── */
-    .keuken-kaart { margin: 14px 0 0; background: linear-gradient(135deg, #fff0f7 0%, #fff 100%); border: 1.5px solid rgba(240,142,180,0.28); border-radius: 16px; padding: 14px 16px; display: none; }
-    .keuken-kaart.zichtbaar { display: block; animation: fadeIn 0.4s ease; }
-    .keuken-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #F08EB4; margin-bottom: 7px; }
-    .keuken-titel { font-size: 14px; font-weight: 800; color: #1a1a1a; margin-bottom: 3px; line-height: 1.35; }
-    .keuken-sub { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 12px; }
-    .keuken-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; background: #F08EB4; color: white; border: none; border-radius: 12px; padding: 11px; font-size: 13.5px; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none; transition: opacity 0.18s; }
+    /* ── Keuken notificatie (fase 1) ── */
+    .keuken-notif { background: #fff; border-left: 5px solid #F08EB4; border-radius: 18px; padding: 13px 13px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    .keuken-notif.zichtbaar { display: block; animation: schuifIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .keuken-notif-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .keuken-icoon { width: 30px; height: 30px; border-radius: 50%; background: rgba(240,142,180,0.12); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .keuken-tekst { flex: 1; }
+    .keuken-titel { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+    .keuken-sub { font-size: 11.5px; color: #666; line-height: 1.55; margin-bottom: 10px; }
+    .keuken-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(240,142,180,0.12); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .keuken-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; background: #F08EB4; color: white; border: none; border-radius: 12px; padding: 11px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none; transition: opacity 0.18s; }
     .keuken-btn:hover { opacity: 0.88; }
 
     /* ── Geniet overlay (afhalen, fase 5) ── */
@@ -299,6 +302,21 @@
         <div class="spacer"></div>
 
         <div class="bottom-area">
+
+          <!-- Keuken notificatie (fase 1) -->
+          <div class="keuken-notif" id="keukenNotif">
+            <div class="keuken-notif-header">
+              <div class="keuken-icoon">🎬</div>
+              <div class="keuken-tekst">
+                <div class="keuken-titel">Exclusief inkijkje in onze keuken</div>
+              </div>
+              <button class="keuken-sluiten" onclick="sluitKeukenNotif()">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="keuken-sub">Kijk achter de schermen hoe onze chef jouw rollen met de hand rolt.</div>
+            <a class="keuken-btn" href="JOUW_VIDEO_URL_HIER" target="_blank">▶&nbsp;Bekijk nu onze keuken</a>
+          </div>
 
           <!-- Klaar notificatie -->
           <div class="klaar-notif" id="klaarNotif">
@@ -401,14 +419,6 @@
               <div class="social-proof-badge" id="socialProofBadge">
                 <div class="sp-dot"></div>
                 <div class="sp-tekst">Vanavond al 68 bestellingen gemaakt in Venlo</div>
-              </div>
-
-              <!-- Keuken inkijkje (fase 1) -->
-              <div class="keuken-kaart" id="keukenKaart">
-                <div class="keuken-badge">🎬 Exclusief inkijkje</div>
-                <div class="keuken-titel">Jouw sushi wordt nu gemaakt</div>
-                <div class="keuken-sub">Kijk achter de schermen hoe onze chef jouw rollen met de hand rolt.</div>
-                <a class="keuken-btn" href="JOUW_VIDEO_URL_HIER" target="_blank">▶&nbsp;Bekijk nu onze keuken</a>
               </div>
 
               <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
@@ -611,8 +621,8 @@
     // Social proof alleen bij fase 0
     document.getElementById('socialProofBadge').style.display = huidigStatus === 0 ? 'flex' : 'none';
 
-    // Keuken kaart alleen bij fase 1
-    const kk = document.getElementById('keukenKaart');
+    // Keuken notif alleen bij fase 1
+    const kk = document.getElementById('keukenNotif');
     if (huidigStatus === 1) kk.classList.add('zichtbaar');
     else kk.classList.remove('zichtbaar');
 
@@ -698,6 +708,7 @@
   /* ── Notificaties ── */
   function sluitKlaarNotif()      { document.getElementById('klaarNotif').classList.remove('zichtbaar'); }
   function sluitVertragingNotif() { document.getElementById('vertragingMelding').classList.remove('zichtbaar'); }
+  function sluitKeukenNotif()     { document.getElementById('keukenNotif').classList.remove('zichtbaar'); }
 
   function toonVertraging(min) {
     delayMinuten = min;
