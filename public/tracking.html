@@ -211,19 +211,6 @@
     /* Delay badge next to time */
     .delay-badge { background: rgba(220,38,38,0.10); border: 1px solid rgba(220,38,38,0.28); color: #dc2626; font-size: 9.5px; font-weight: 800; padding: 3px 7px; border-radius: 8px; letter-spacing: 0.2px; flex-shrink: 0; align-self: center; display: none; }
 
-    /* ── Countdown timer ── */
-    .countdown-wrap {
-      background: linear-gradient(135deg, rgba(240,142,180,0.08), rgba(255,240,248,0.5));
-      border: 1.5px solid rgba(240,142,180,0.22);
-      border-radius: 14px; padding: 10px 14px 10px;
-      text-align: center; flex-shrink: 0;
-    }
-    .cd-label { font-size: 9px; font-weight: 700; color: #F08EB4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-    .cd-getal { font-size: 38px; font-weight: 800; color: #1a1a1a; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
-    .cd-eenheid { font-size: 10px; color: #aaa; font-weight: 600; margin-top: 2px; }
-    .countdown-wrap.klaar { border-color: rgba(46,160,107,0.35); background: rgba(46,160,107,0.06); }
-    .countdown-wrap.klaar .cd-getal { color: #2ea06b; font-size: 18px; }
-    .countdown-wrap.klaar .cd-label { color: #2ea06b; }
     /* Orange delay state on tracking card */
     .tracking-vol.vertraagd .voortgang-fill { background: linear-gradient(90deg, #FF9800 0%, #ffcc80 100%); }
     .tracking-vol.vertraagd .stap-item.actief .stap-bol { border-color: #FF9800; animation: bolPulsOranje 2s infinite; }
@@ -323,10 +310,12 @@
                     <span class="afhaal-label">Afhalen</span>
                     <button class="min-btn" onclick="verklein()">−</button>
                   </div>
-                  <div class="countdown-wrap" id="countdownWrap">
-                    <div class="cd-label">⏱ Klaar over</div>
-                    <div class="cd-getal" id="cdGetal">–</div>
-                    <div class="cd-eenheid" id="cdEenheid">minuten</div>
+                  <div class="afhaal-tijd" id="countdownWrap">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#F08EB4" stroke-width="1.6"/><path d="M8 4.5 L8 8 L10.5 10" stroke="#F08EB4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div>
+                      <div class="at-label">Klaar over</div>
+                      <div class="at-tijd" id="cdGetal">–</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -468,25 +457,14 @@
     const nu      = new Date();
     const diffMs  = doelTijd - nu + (delayMinuten * 60000);
     const diffMin = Math.max(0, Math.ceil(diffMs / 60000));
-    const wrap    = document.getElementById('countdownWrap');
     const getal   = document.getElementById('cdGetal');
-    const eenheid = document.getElementById('cdEenheid');
-
     if (huidigStatus >= 4) {
-      wrap.classList.add('klaar');
-      getal.textContent   = '✓ Staat klaar';
-      eenheid.textContent = 'kom afhalen!';
-      document.getElementById('cdLabel') && (document.querySelector('.cd-label').textContent = '');
+      getal.textContent = '✓ Klaar';
+      getal.style.color = '#2ea06b';
       return;
     }
-    wrap.classList.remove('klaar');
-    if (diffMin <= 1) {
-      getal.textContent   = '< 1';
-      eenheid.textContent = 'minuut';
-    } else {
-      getal.textContent   = diffMin;
-      eenheid.textContent = diffMin === 1 ? 'minuut' : 'minuten';
-    }
+    getal.style.color = '';
+    getal.textContent = diffMin <= 1 ? '< 1 min' : diffMin + ' min';
   }
   updateCountdown();
   setInterval(updateCountdown, 30000);

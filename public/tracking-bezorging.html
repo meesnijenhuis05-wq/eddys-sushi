@@ -321,11 +321,11 @@
                     <span class="afhaal-label">Bezorging</span>
                     <button class="min-btn" onclick="verklein()">−</button>
                   </div>
-                  <div class="afhaal-tijd">
+                  <div class="afhaal-tijd" id="countdownWrap">
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#F08EB4" stroke-width="1.6"/><path d="M8 4.5 L8 8 L10.5 10" stroke="#F08EB4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <div>
-                      <div class="at-label" id="afhaalLabel">Verwachte tijd</div>
-                      <div class="at-tijd" id="afhaaltijd">–</div>
+                      <div class="at-label">Bezorgd over</div>
+                      <div class="at-tijd" id="cdGetal">–</div>
                     </div>
                   </div>
                 </div>
@@ -480,15 +480,24 @@
   }
   updateKlok(); setInterval(updateKlok, 10000);
 
-  /* ── Afhaaltijd ── */
-  function berekenAfhaaltijd() {
-    const nu = new Date();
-    const s  = new Date(nu.getTime() + 20 * 60000);
-    const e  = new Date(nu.getTime() + 25 * 60000);
-    const f  = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-    return `${f(s)} – ${f(e)}`;
+  /* ── Countdown timer ── */
+  const doelTijd = new Date(Date.now() + 30 * 60000); // 30 min vanaf nu
+
+  function updateCountdown() {
+    const nu      = new Date();
+    const diffMs  = doelTijd - nu + (delayMinuten * 60000);
+    const diffMin = Math.max(0, Math.ceil(diffMs / 60000));
+    const getal   = document.getElementById('cdGetal');
+    if (huidigStatus >= 4) {
+      getal.textContent = '✓ Onderweg';
+      getal.style.color = '#2ea06b';
+      return;
+    }
+    getal.style.color = '';
+    getal.textContent = diffMin <= 1 ? '< 1 min' : diffMin + ' min';
   }
-  document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
+  updateCountdown();
+  setInterval(updateCountdown, 30000);
 
   /* ── Trilling ── */
   function triggerTriling() {
@@ -511,10 +520,7 @@
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
 
-    document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
-    if (delayMinuten === 0) {
-      document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
-    }
+    updateCountdown();
 
     document.getElementById('stappenRij').innerHTML = STAPPEN.map((s, i) => {
       const cls = i < huidigStatus ? 'voltooid' : i === huidigStatus ? 'actief' : '';
@@ -576,12 +582,8 @@
     document.getElementById('vertragingMelding').classList.add('zichtbaar');
     triggerTriling();
     if (isGeminimaliseerd) vergroot();
-    // Orange state on tracking card + inline rood delay in tijdstekst
+    // Orange state on tracking card
     document.getElementById('trackingVol').classList.add('vertraagd');
-    const basis = berekenAfhaaltijd();
-    document.getElementById('afhaalLabel').textContent = 'Verwachte bezorgtijd';
-    document.getElementById('afhaaltijd').innerHTML =
-      `${basis} <span style="color:#dc2626;font-weight:800">+${min} min</span>`;
     updateScherm();
   }
 
@@ -659,7 +661,6 @@
       document.getElementById('vertragingMelding').classList.remove('zichtbaar');
       document.getElementById('klaarNotif').classList.remove('zichtbaar');
       document.getElementById('trackingVol').classList.remove('vertraagd');
-      document.getElementById('afhaaltijd').textContent = berekenAfhaaltijd();
       delayMinuten = 0;
       huidigStatus = order.status;
       updateScherm();
