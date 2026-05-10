@@ -366,7 +366,7 @@
                 </div>
               </div>
 
-              <div class="social-proof-badge">
+              <div class="social-proof-badge" id="socialProofBadge">
                 <div class="sp-dot"></div>
                 <div class="sp-tekst">Vanavond al 68 bestellingen gemaakt in Venlo</div>
               </div>
@@ -560,6 +560,9 @@
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
 
     updateCountdown();
+
+    // Social proof alleen bij fase 0
+    document.getElementById('socialProofBadge').style.display = huidigStatus === 0 ? 'flex' : 'none';
 
     document.getElementById('stappenRij').innerHTML = STAPPEN.map((s, i) => {
       const cls = i < huidigStatus ? 'voltooid' : i === huidigStatus ? 'actief' : '';

@@ -386,7 +386,7 @@
                 </a>
               </div>
 
-              <div class="social-proof-badge">
+              <div class="social-proof-badge" id="socialProofBadge">
                 <div class="sp-dot"></div>
                 <div class="sp-tekst">Vanavond al 68 bestellingen gemaakt in Venlo</div>
               </div>
@@ -582,6 +582,9 @@
 
     // Locatieknop tonen bij fase 2
     document.getElementById('locatieWrap').style.display = huidigStatus === 2 ? 'block' : 'none';
+
+    // Social proof alleen bij fase 0
+    document.getElementById('socialProofBadge').style.display = huidigStatus === 0 ? 'flex' : 'none';
 
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
