@@ -230,9 +230,18 @@
     .sp-tekst { font-size: 10.5px; color: #999; font-weight: 500; line-height: 1.3; }
 
     /* ── Locatie knop (afhalen, fase 2) ── */
-    .locatie-knop-wrap { margin-top: 20px; text-align: center; display: none; }
+    .locatie-knop-wrap { margin-top: 20px; margin-bottom: 18px; text-align: center; display: none; }
     .locatie-knop { display: inline-flex; align-items: center; gap: 6px; background: rgba(240,142,180,0.10); border: 1.5px solid rgba(240,142,180,0.38); border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #F08EB4; cursor: pointer; font-family: inherit; text-decoration: none; transition: background 0.18s; }
     .locatie-knop:active { background: rgba(240,142,180,0.22); }
+
+    /* ── Keuken kaart (fase 1) ── */
+    .keuken-kaart { margin: 14px 0 0; background: linear-gradient(135deg, #fff0f7 0%, #fff 100%); border: 1.5px solid rgba(240,142,180,0.28); border-radius: 16px; padding: 14px 16px; display: none; }
+    .keuken-kaart.zichtbaar { display: block; animation: fadeIn 0.4s ease; }
+    .keuken-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #F08EB4; margin-bottom: 7px; }
+    .keuken-titel { font-size: 14px; font-weight: 800; color: #1a1a1a; margin-bottom: 3px; line-height: 1.35; }
+    .keuken-sub { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 12px; }
+    .keuken-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; background: #F08EB4; color: white; border: none; border-radius: 12px; padding: 11px; font-size: 13.5px; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none; transition: opacity 0.18s; }
+    .keuken-btn:hover { opacity: 0.88; }
 
     /* ── Geniet overlay (afhalen, fase 5) ── */
     .geniet-overlay { position: absolute; inset: 0; background: transparent; display: none; flex-direction: column; align-items: flex-end; justify-content: flex-end; z-index: 100; }
@@ -392,6 +401,14 @@
               <div class="social-proof-badge" id="socialProofBadge">
                 <div class="sp-dot"></div>
                 <div class="sp-tekst">Vanavond al 68 bestellingen gemaakt in Venlo</div>
+              </div>
+
+              <!-- Keuken inkijkje (fase 1) -->
+              <div class="keuken-kaart" id="keukenKaart">
+                <div class="keuken-badge">🎬 Exclusief inkijkje</div>
+                <div class="keuken-titel">Jouw sushi wordt nu gemaakt</div>
+                <div class="keuken-sub">Kijk achter de schermen hoe onze chef jouw rollen met de hand rolt.</div>
+                <a class="keuken-btn" href="JOUW_VIDEO_URL_HIER" target="_blank">▶&nbsp;Bekijk nu onze keuken</a>
               </div>
 
               <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
@@ -593,6 +610,11 @@
 
     // Social proof alleen bij fase 0
     document.getElementById('socialProofBadge').style.display = huidigStatus === 0 ? 'flex' : 'none';
+
+    // Keuken kaart alleen bij fase 1
+    const kk = document.getElementById('keukenKaart');
+    if (huidigStatus === 1) kk.classList.add('zichtbaar');
+    else kk.classList.remove('zichtbaar');
 
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
