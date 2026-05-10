@@ -79,13 +79,19 @@
     .kn-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(240,142,180,0.12); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
     /* ── Vertraging melding ── */
-    .vertraging-melding { background: #fff; border-left: 5px solid #FF9800; border-radius: 18px; padding: 11px 13px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
-    .vertraging-melding.zichtbaar { display: flex; align-items: center; gap: 10px; animation: schuifIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .vertraging-melding { background: #fff; border-left: 5px solid #FF9800; border-radius: 18px; padding: 13px 13px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    .vertraging-melding.zichtbaar { display: block; animation: schuifIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .vm-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .vm-klok { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,152,0,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .vm-tekst { flex: 1; }
     .vm-titel { font-size: 13px; font-weight: 700; color: #1a1a1a; }
-    .vm-desc  { font-size: 11px; color: #999; margin-top: 2px; }
+    .vm-desc  { font-size: 11.5px; color: #666; line-height: 1.55; margin-bottom: 8px; }
     .vm-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,152,0,0.10); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .vm-tijd-wrap { background: rgba(255,152,0,0.06); border: 1px solid rgba(255,152,0,0.22); border-radius: 8px; padding: 7px 10px; margin-bottom: 8px; }
+    .vm-tijd-label { font-size: 8.5px; color: #FF9800; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .vm-tijd-waarde { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+    .vm-korting { font-size: 11px; color: #aaa; font-style: italic; margin-bottom: 4px; }
+    .vm-footer { font-size: 10.5px; color: #bbb; font-weight: 600; }
 
     /* ── Gedeelde kaart stijl ── */
     .kaart-basis {
@@ -217,6 +223,41 @@
     @keyframes bolPulsOranje { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,152,0,0.6); } 50%{ box-shadow: 0 0 0 7px rgba(255,152,0,0); } }
     .tracking-vol.vertraagd .at-tijd { color: #FF9800; }
 
+    /* ── Social proof badge ── */
+    .social-proof-badge { display: flex; align-items: center; gap: 7px; background: rgba(240,142,180,0.06); border: 1px solid rgba(240,142,180,0.16); border-radius: 10px; padding: 6px 10px; margin-bottom: 10px; }
+    .sp-dot { width: 7px; height: 7px; border-radius: 50%; background: #F08EB4; flex-shrink: 0; animation: spPuls 1.8s ease-in-out infinite; }
+    @keyframes spPuls { 0%,100%{ opacity:1;transform:scale(1); } 50%{ opacity:0.4;transform:scale(0.82); } }
+    .sp-tekst { font-size: 10.5px; color: #999; font-weight: 500; line-height: 1.3; }
+
+    /* ── Locatie knop (afhalen, fase 2) ── */
+    .locatie-knop-wrap { margin-top: 10px; text-align: center; display: none; }
+    .locatie-knop { display: inline-flex; align-items: center; gap: 6px; background: rgba(240,142,180,0.10); border: 1.5px solid rgba(240,142,180,0.38); border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #F08EB4; cursor: pointer; font-family: inherit; text-decoration: none; transition: background 0.18s; }
+    .locatie-knop:active { background: rgba(240,142,180,0.22); }
+
+    /* ── Geniet overlay (afhalen, fase 5) ── */
+    .geniet-overlay { position: absolute; inset: 0; background: rgba(255,240,248,0.97); display: none; flex-direction: column; align-items: flex-end; justify-content: flex-end; z-index: 100; }
+    .geniet-overlay.zichtbaar { display: flex; animation: fadeIn 0.5s ease; }
+    .geniet-kaart { background: white; border-radius: 28px 28px 0 0; padding: 28px 20px 40px; width: 100%; position: relative; overflow: hidden; max-height: 88%; overflow-y: auto; }
+    .confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+    .confetti-stuk { position: absolute; border-radius: 2px; animation: confettiVal 3s ease-in forwards; }
+    @keyframes confettiVal { 0%{ opacity:1;transform:translateY(-10px) rotate(0deg); } 100%{ opacity:0;transform:translateY(450px) rotate(720deg); } }
+    .geniet-content { position: relative; z-index: 2; }
+    .geniet-titel { font-size: 22px; font-weight: 800; color: #1a1a1a; text-align: center; margin-bottom: 8px; }
+    .geniet-sub { font-size: 14px; color: #777; text-align: center; line-height: 1.5; margin-bottom: 18px; }
+    .geniet-punten-wrap { background: linear-gradient(135deg, rgba(240,142,180,0.08), rgba(255,220,234,0.16)); border: 1.5px solid rgba(240,142,180,0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; text-align: center; }
+    .geniet-punten-nieuw { font-size: 20px; font-weight: 800; color: #F08EB4; margin-bottom: 4px; }
+    .geniet-punten-totaal { font-size: 12px; color: #bbb; }
+    .geniet-quote { font-size: 12.5px; color: #888; font-style: italic; line-height: 1.65; margin-bottom: 18px; border-left: 3px solid rgba(240,142,180,0.5); padding-left: 12px; }
+    .geniet-deel-btn { width: 100%; background: linear-gradient(135deg, #F08EB4, #e07aa0); color: white; border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.2px; transition: opacity 0.18s; }
+    .geniet-deel-btn:hover { opacity: 0.88; }
+
+    /* ── Review bedank extras ── */
+    .rv-kopieer-btn { background: rgba(240,142,180,0.10); border: 1.5px solid rgba(240,142,180,0.32); color: #F08EB4; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 8px; cursor: pointer; font-family: inherit; transition: background 0.18s; }
+    .rv-kopieer-btn:active { background: rgba(240,142,180,0.22); }
+    .rv-geldig { text-align: center; font-size: 10.5px; color: #ccc; margin-top: 4px; margin-bottom: 12px; }
+    .rv-deel-btn { width: 100%; background: rgba(240,142,180,0.07); border: 1.5px solid rgba(240,142,180,0.25); color: #F08EB4; border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.18s; margin-top: 8px; }
+    .rv-deel-btn:hover { background: rgba(240,142,180,0.14); }
+
     @keyframes schuifIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
   </style>
@@ -252,8 +293,8 @@
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3.5 9 L7.5 13 L14.5 5" stroke="#F08EB4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <div class="kn-tekst">
-              <div class="kn-titel">Bestelling staat klaar!</div>
-              <div class="kn-desc">Kom uw bestelling afhalen bij Eddy's Sushi.</div>
+              <div class="kn-titel">Mees, jouw sushi staat klaar!</div>
+              <div class="kn-desc">Kom maar — we wachten op je.</div>
             </div>
             <button class="kn-sluiten" onclick="sluitKlaarNotif()">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
@@ -262,16 +303,24 @@
 
           <!-- Vertraging melding -->
           <div class="vertraging-melding" id="vertragingMelding">
-            <div class="vm-klok">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF9800" stroke-width="1.8"/><path d="M9 5 L9 9 L12 11.5" stroke="#FF9800" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="vm-header">
+              <div class="vm-klok">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF9800" stroke-width="1.8"/><path d="M9 5 L9 9 L12 11.5" stroke="#FF9800" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="vm-tekst">
+                <div class="vm-titel">Mees, we willen eerlijk zijn.</div>
+              </div>
+              <button class="vm-sluiten" onclick="sluitVertragingNotif()">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
             </div>
-            <div class="vm-tekst">
-              <div class="vm-titel">Bestelling vertraagd</div>
-              <div class="vm-desc" id="vmDesc">–</div>
+            <div class="vm-desc">Jouw bestelling loopt iets uit — we hebben iets langer nodig om het perfect te maken.</div>
+            <div class="vm-tijd-wrap" id="vmTijdWrap" style="display:none">
+              <div class="vm-tijd-label">Nieuwe tijd</div>
+              <div class="vm-tijd-waarde" id="vmTijdWaarde">–</div>
             </div>
-            <button class="vm-sluiten" onclick="sluitVertragingNotif()">
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
+            <div class="vm-korting">Als excuus: 10% korting op je eerstvolgende bestelling.</div>
+            <div class="vm-footer">— Eddy's Sushi</div>
           </div>
 
           <!-- Compact view (geminimaliseerd) -->
@@ -290,7 +339,7 @@
 
               <div class="kaart-header">
                 <div class="header-logo-wrap">
-                  <svg width="80" height="53" viewBox="0 0 1058 707" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="100" height="67" viewBox="0 0 1058 707" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#lc)">
                       <mask id="lm" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1058" height="707">
                         <path d="M1057.48 0H0V706.427H1057.48V0Z" fill="white"/>
@@ -310,12 +359,15 @@
                     <span class="afhaal-label">Afhalen</span>
                     <button class="min-btn" onclick="verklein()">−</button>
                   </div>
-                  <div class="afhaal-tijd" id="countdownWrap">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#F08EB4" stroke-width="1.6"/><path d="M8 4.5 L8 8 L10.5 10" stroke="#F08EB4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <div>
-                      <div class="at-label">Klaar over</div>
-                      <div class="at-tijd" id="cdGetal">–</div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div class="afhaal-tijd" id="countdownWrap">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#F08EB4" stroke-width="1.6"/><path d="M8 4.5 L8 8 L10.5 10" stroke="#F08EB4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      <div>
+                        <div class="at-label">Klaar over</div>
+                        <div class="at-tijd" id="cdGetal">–</div>
+                      </div>
                     </div>
+                    <div class="delay-badge" id="delayBadge"></div>
                   </div>
                 </div>
               </div>
@@ -324,7 +376,19 @@
                 <div class="sug-icoon" id="stapIcoon"></div>
                 <div class="sug-tekst">
                   <div class="sug-titel" id="statusNaam">–</div>
+                  <div class="sug-desc" id="statusSub"></div>
                 </div>
+              </div>
+
+              <div class="locatie-knop-wrap" id="locatieWrap">
+                <a class="locatie-knop" href="https://www.google.com/maps/dir/?api=1&destination=Eddy%27s+Sushi+Venlo&travelmode=driving" target="_blank">
+                  📍 Navigeer naar Eddy's Sushi
+                </a>
+              </div>
+
+              <div class="social-proof-badge">
+                <div class="sp-dot"></div>
+                <div class="sp-tekst">Vanavond al 68 bestellingen gemaakt in Venlo</div>
               </div>
 
               <div class="voortgang-bg"><div class="voortgang-fill" id="voortgangFill"></div></div>
@@ -386,13 +450,35 @@
           <button class="rv-verstuur" onclick="verstuurReview()">Claim mijn verrassing</button>
           <div class="rv-social"><span class="rv-social-tekst">Sluit aan bij de 10.000+ vijfsterrenbeoordelingen</span></div>
           <div id="rvBedankt" style="display:none">
-            <div class="rv-bedankt-tekst">De sushichef bedankt je voor je feedback!</div>
+            <div class="rv-bedankt-tekst">De sushichef bedankt je!</div>
             <div class="rv-code-wrap">
-              <div class="rv-code-label">Jouw kortingscode — gratis rol</div>
-              <div class="rv-code" id="rvCode">—</div>
+              <div class="rv-code-label">Jouw kortingscode — Gratis rol</div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:7px;">
+                <div class="rv-code" id="rvCode" style="margin-bottom:0">—</div>
+                <button class="rv-kopieer-btn" id="rvKopieer" onclick="kopieerCode()">Kopieer</button>
+              </div>
               <div class="rv-code-desc">Gebruik deze code bij je volgende bestelling bij Eddy's Sushi</div>
             </div>
             <div class="rv-timer" id="rvTimer"></div>
+            <div class="rv-geldig">Geldig tot: 10 juni 2026</div>
+            <button class="rv-deel-btn" onclick="deelCode()">Deel met vrienden 🍣</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Geniet overlay (afhalen, fase 5) -->
+      <div class="geniet-overlay" id="genietOverlay">
+        <div class="geniet-kaart">
+          <div class="confetti-wrap" id="confettiWrap"></div>
+          <div class="geniet-content">
+            <div class="geniet-titel">Yes, Mees! 🎉</div>
+            <div class="geniet-sub">Jouw geluksmoment is onderweg naar je mond.</div>
+            <div class="geniet-punten-wrap">
+              <div class="geniet-punten-nieuw">+71 sushipunten</div>
+              <div class="geniet-punten-totaal">Totaal: 142 sushipunten</div>
+            </div>
+            <div class="geniet-quote">"Wij hopen dat elke hap smaakt zoals wij 'm bedoeld hebben. Geniet, Mees."<br>— Team Eddy's Sushi</div>
+            <button class="geniet-deel-btn" onclick="deelOpSocial()">Deel jouw geluksmoment op social media 🍣</button>
           </div>
         </div>
       </div>
@@ -415,12 +501,12 @@
   const DOT_STER = `<svg viewBox="0 0 18 18" width="12" height="12" fill="none"><path d="M9 2 L10.5 6.5 L15.5 6.5 L11.5 9.5 L13 14 L9 11 L5 14 L6.5 9.5 L2.5 6.5 L7.5 6.5 Z" fill="#F08EB4"/></svg>`;
 
   const STAPPEN = [
-    { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: 'Bestelling ontvangen',            sub: 'We hebben uw bestelling goed ontvangen.' },
-    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Bestelling wordt bereid',          sub: 'Onze chef is druk bezig met uw sushi!' },
-    { icoonDot: '⏰',     icoonGroot: ICOON_BIJNA,     kort: 'Bijna klaar',  vol: 'Bestelling is bijna klaar',        sub: 'Nog even geduld, bijna klaar...' },
-    { icoonDot: DOT_TAS,  icoonGroot: ICOON_VERPAKT,   kort: 'Verpakt',      vol: 'Bestelling wordt verpakt',         sub: 'Bijna tijd om te komen afhalen!' },
-    { icoonDot: DOT_VINK, icoonGroot: ICOON_KLAAR,     kort: 'Klaar',        vol: 'Bestelling staat klaar',           sub: 'U kunt uw bestelling afhalen bij Eddy\'s Sushi.' },
-    { icoonDot: DOT_STER, icoonGroot: ICOON_GENIET,    kort: 'Opgehaald',    vol: 'Geniet van je geluksmoment',       sub: 'Smakelijk! Wij wensen u veel smaak.' },
+    { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: 'Eddy heeft jouw bestelling!',      sub: 'We gaan nu voor je aan de slag, Mees.' },
+    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Eddy rolt nu jouw rollen',          sub: 'Verse rijst, strak gerold — bijna klaar.' },
+    { icoonDot: '⏰',     icoonGroot: ICOON_BIJNA,     kort: 'Bijna klaar',  vol: 'Tijd om te vertrekken!',            sub: '' },
+    { icoonDot: DOT_TAS,  icoonGroot: ICOON_VERPAKT,   kort: 'Verpakt',      vol: 'Jouw geluksmoment wordt ingepakt',  sub: 'Bijna klaar om op te halen, Mees.' },
+    { icoonDot: DOT_VINK, icoonGroot: ICOON_KLAAR,     kort: 'Klaar',        vol: 'Jouw geluksmoment wacht!',          sub: 'Kom maar — we wachten op je, Mees.' },
+    { icoonDot: DOT_STER, icoonGroot: ICOON_GENIET,    kort: 'Opgehaald',    vol: 'Geniet van je geluksmoment',        sub: 'Smakelijk! Wij wensen u veel smaak.' },
   ];
   const VOORTGANG = [0, 20, 40, 60, 80, 100];
 
@@ -486,6 +572,17 @@
     document.getElementById('statusNaam').textContent = stap.vol;
     document.getElementById('voortgangFill').style.width = VOORTGANG[huidigStatus] + '%';
 
+    // Dynamische subtekst
+    if (huidigStatus === 2) {
+      const diffMin = Math.max(1, Math.ceil((doelTijd - new Date() + delayMinuten * 60000) / 60000));
+      document.getElementById('statusSub').textContent = `Jouw bestelling is over ${diffMin} ${diffMin === 1 ? 'minuut' : 'minuten'} klaar.`;
+    } else {
+      document.getElementById('statusSub').textContent = stap.sub;
+    }
+
+    // Locatieknop tonen bij fase 2
+    document.getElementById('locatieWrap').style.display = huidigStatus === 2 ? 'block' : 'none';
+
     // Altijd uitklappen bij statuswijziging (behalve bij stap 5)
     if (huidigStatus < 5 && isGeminimaliseerd) vergroot();
 
@@ -494,7 +591,6 @@
     document.getElementById('stappenRij').innerHTML = STAPPEN.map((s, i) => {
       const cls = i < huidigStatus ? 'voltooid' : i === huidigStatus ? 'actief' : '';
       const bol = i < huidigStatus ? '✓' : s.icoonDot;
-      const bolCls = bol.startsWith('<svg') ? '' : '';
       const el = `<div class="stap-bol ${cls}">${bol}</div>`;
       return `<div class="stap-item ${cls}">${el}<div class="stap-label">${s.kort}</div></div>`;
     }).join('');
@@ -509,7 +605,29 @@
     if (huidigStatus === 5) {
       document.getElementById('klaarNotif').classList.remove('zichtbaar');
       verklein();
+      toonGenietOverlay();
     }
+  }
+
+  /* ── Geniet overlay ── */
+  function toonGenietOverlay() {
+    document.getElementById('genietOverlay').classList.add('zichtbaar');
+    maakConfetti();
+    setTimeout(() => { document.getElementById('confettiWrap').innerHTML = ''; }, 3500);
+  }
+  function maakConfetti() {
+    const wrap = document.getElementById('confettiWrap');
+    wrap.innerHTML = '';
+    const kleuren = ['#F08EB4','#FFD6E7','#FF6B9D','#ffd700','#a8e6cf','#dcd3ff','#ffb3ba'];
+    for (let i = 0; i < 55; i++) {
+      const s = document.createElement('div');
+      s.className = 'confetti-stuk';
+      s.style.cssText = `left:${Math.random()*100}%;top:${-10-Math.random()*30}px;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;background:${kleuren[Math.floor(Math.random()*kleuren.length)]};animation-delay:${Math.random()*1.5}s;animation-duration:${2+Math.random()*1.5}s;`;
+      wrap.appendChild(s);
+    }
+  }
+  function deelOpSocial() {
+    if (navigator.share) navigator.share({ title: "Eddy's Sushi", text: 'Ik geniet van een geluksmoment bij Eddy\'s Sushi! 🍣' });
   }
 
   /* ── Compact view ── */
@@ -547,11 +665,18 @@
 
   function toonVertraging(min) {
     delayMinuten = min;
-    document.getElementById('vmDesc').textContent = `Je bestelling is helaas met ${min} ${min === 1 ? 'minuut' : 'minuten'} vertraagd.`;
+    const nuMs    = doelTijd - new Date();
+    const origMin = Math.max(0, Math.ceil(nuMs / 60000));
+    const nieuwMin = origMin + min;
+    const tijdWrap = document.getElementById('vmTijdWrap');
+    tijdWrap.style.display = 'block';
+    document.getElementById('vmTijdWaarde').textContent = `${nieuwMin} min (was ${origMin} min)`;
+    const badge = document.getElementById('delayBadge');
+    badge.style.display = 'flex';
+    badge.textContent   = `+${min}`;
     document.getElementById('vertragingMelding').classList.add('zichtbaar');
     triggerTriling();
     if (isGeminimaliseerd) vergroot();
-    // Orange state on tracking card + inline rood delay in tijdstekst
     document.getElementById('trackingVol').classList.add('vertraagd');
     updateScherm();
   }
@@ -625,11 +750,27 @@
   const socket = io();
   socket.emit('join-order', 'DEMO01');
 
+  /* ── Kopieer & deel kortingscode ── */
+  function kopieerCode() {
+    const code = document.getElementById('rvCode').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(code);
+    const btn = document.getElementById('rvKopieer');
+    btn.textContent = 'Gekopieerd!';
+    setTimeout(() => { btn.textContent = 'Kopieer'; }, 2000);
+  }
+  function deelCode() {
+    const code = document.getElementById('rvCode').textContent;
+    if (navigator.share) navigator.share({ title: "Eddy's Sushi kortingscode", text: `Gebruik mijn kortingscode ${code} bij Eddy's Sushi voor een gratis rol! 🍣` });
+  }
+
   socket.on('order-update', (order) => {
     if (order.status !== huidigStatus) {
       document.getElementById('vertragingMelding').classList.remove('zichtbaar');
       document.getElementById('klaarNotif').classList.remove('zichtbaar');
       document.getElementById('trackingVol').classList.remove('vertraagd');
+      document.getElementById('vmTijdWrap').style.display = 'none';
+      const badge = document.getElementById('delayBadge');
+      badge.style.display = 'none';
       delayMinuten = 0;
       huidigStatus = order.status;
       updateScherm();
