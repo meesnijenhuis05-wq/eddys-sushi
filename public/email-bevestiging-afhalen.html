@@ -23,7 +23,7 @@
     .header {
       background: linear-gradient(155deg, #F08EB4 0%, #e87daa 55%, #d96899 100%);
       border-radius: 22px 22px 0 0;
-      padding: 26px 36px 26px;
+      padding: 26px 36px 14px;
       position: relative;
       overflow: hidden;
     }
@@ -85,7 +85,7 @@
     .hero-subline {
       position: relative; z-index: 1;
       font-size: 14.5px; color: rgba(255,255,255,0.88);
-      line-height: 1.55; font-weight: 400;
+      line-height: 1.65; font-weight: 400;
       margin-bottom: 12px;
     }
 
@@ -107,7 +107,7 @@
       background: #fff;
       color: #d45c8a; font-size: 14px; font-weight: 800;
       border-radius: 12px; padding: 13px 20px;
-      letter-spacing: 0.2px;
+      letter-spacing: 0.2px; min-height: 44px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
     .hero-tracking-knop span { font-size: 16px; margin-left: 6px; }
@@ -209,7 +209,7 @@
 
     /* ── GREETING ── */
     .greeting-sectie {
-      padding: 28px 44px 24px;
+      padding: 14px 44px 24px;
       border-bottom: 1px solid #f0f0f0;
     }
     .greeting-naam {
@@ -262,13 +262,13 @@
     }
     .product-info { flex: 1; min-width: 0; }
     .product-naam { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 3px; }
-    .product-omsch { font-size: 12px; color: #aaa; line-height: 1.4; }
+    .product-omsch { font-size: 12px; color: #888; line-height: 1.5; }
 
     /* prijs + aantal */
     .product-prijs-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; white-space: nowrap; }
     .product-qty { font-size: 11px; font-weight: 600; color: #bbb; }
     .product-prijs-kolom { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-    .product-prijs-oud { font-size: 11px; font-weight: 400; color: #ccc; text-decoration: line-through; }
+    .product-prijs-oud { font-size: 11px; font-weight: 400; color: #bbb; text-decoration: line-through; }
     .product-prijs { font-size: 13px; font-weight: 400; color: #2ea06b; }
     .euro { font-size: 11px; color: #bbb; }
 
@@ -294,8 +294,8 @@
 
     .totaal-wrap { margin-top: 14px; border-top: 1.5px solid #f0f0f0; padding-top: 14px; }
     .totaal-rij-inner { display: flex; justify-content: space-between; padding: 4px 0; }
-    .totaal-rij-inner .lbl { font-size: 13px; color: #999; }
-    .totaal-rij-inner .val { font-size: 13px; color: #999; }
+    .totaal-rij-inner .lbl { font-size: 13px; color: #777; }
+    .totaal-rij-inner .val { font-size: 13px; color: #777; }
     .totaal-rij-inner.korting .lbl { color: #2ea06b; font-weight: 600; }
     .totaal-rij-inner.korting .val { color: #2ea06b; font-weight: 700; }
     /* 1. Totaal: zwart i.p.v. roze */
@@ -326,7 +326,7 @@
     .ib-icon { font-size: 22px; margin-bottom: 10px; display: block; }
     .ib-lbl { font-size: 10px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; }
     .ib-val { font-size: 14px; font-weight: 700; color: #1a1a1a; line-height: 1.4; }
-    .ib-sub { font-size: 12px; color: #aaa; margin-top: 3px; }
+    .ib-sub { font-size: 12px; color: #888; margin-top: 3px; }
 
     /* ── TRACKING CTA ── */
     .tracking-sectie {
@@ -527,6 +527,7 @@
       color: #fff; text-decoration: none;
       font-size: 14px; font-weight: 800;
       padding: 13px 28px; border-radius: 12px;
+      min-height: 44px; line-height: 18px;
       box-shadow: 0 6px 20px rgba(255,107,157,0.30);
       letter-spacing: 0.1px;
     }
@@ -576,6 +577,15 @@
     .pbf-tagline { font-size: 17px; color: #fff; font-weight: 700; font-style: italic; margin-bottom: 18px; letter-spacing: 0.2px; }
     .pbf-unsub { font-size: 11px; color: rgba(255,255,255,0.50); text-decoration: underline; cursor: pointer; }
 
+    /* ── REDUCED MOTION (Accessibility §1) ── */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-pijl svg,
+      .hero-anim-balk,
+      .curve-lijn,
+      .curve-pijl,
+      * { animation: none !important; transition: none !important; }
+    }
+
     @media (max-width: 480px) {
       .sectie, .greeting-sectie, .tracking-sectie,
       .support-sectie, .afsluiting,
@@ -589,6 +599,24 @@
       .contact-rij { flex-direction: column; }
       .peak-eddy { flex-direction: column; align-items: center; text-align: center; }
     }
+
+    @keyframes tekenCurve {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes curvePijl {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .curve-lijn {
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: tekenCurve 9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .curve-pijl {
+      opacity: 0;
+      animation: curvePijl 0.3s ease-out forwards;
+      animation-delay: 9s;
+    }
   </style>
 </head>
 <body>
@@ -600,10 +628,10 @@
   <!-- ── USP TOP BALK ── -->
   <div class="usp-balk">
     <div class="usp-item"><strong>10.000+</strong> tevreden klanten</div>
-    <div class="usp-sep">·</div>
+    <div class="usp-sep" style="font-size:13px; color:#F4A8C7; font-weight:400; letter-spacing:0;">幸せ</div>
     <div class="usp-item">Gemiddeld <strong>4,9 <span style="color:#F08EB4;">★</span></strong> op Google</div>
-    <div class="usp-sep">·</div>
-    <div class="usp-item"><strong>Vers bereid</strong> elke dag</div>
+    <div class="usp-sep" style="font-size:13px; color:#F4A8C7; font-weight:400; letter-spacing:0;">寿司</div>
+    <div class="usp-item"><strong>Vers bereid,</strong> elke dag</div>
   </div>
 
   <!-- ── HEADER ── -->
@@ -617,17 +645,14 @@
       <div class="logo-kaart">
         <img src="/logo.svg" width="86" alt="Eddy's Sushi">
       </div>
-      <div class="hero-badge-tekst">Voor jou,<br>vooruit gedacht</div>
+      <div class="hero-badge-tekst">Voor jou, vooruit gedacht</div>
     </div>
 
     <!-- rij 3: headline -->
-    <div class="hero-headline">Eddy rolt jouw geluksmoment</div>
+    <div class="hero-headline">Eddy's rolt jouw geluksmoment</div>
 
     <!-- rij 4: subline -->
     <div class="hero-subline">Binnenkort geniet je van verse sushi, royale rolls en een zorgeloze avond!</div>
-
-    <!-- Aanpassing 3: Scroll-pijl verwijderd — creëerde affordance mismatch in email context -->
-    <div style="border-bottom: 1px solid rgba(255,255,255,0.30); margin-top: 16px;"></div>
 
   </div>
 
@@ -638,14 +663,53 @@
     <div class="greeting-sectie">
       <div class="greeting-naam">Bedankt voor je bestelling, <span>Mees</span>!</div>
       <div class="greeting-tekst">
-        We gaan voor je aan de slag. Eddy zorgt dat je rollen op dit moment vers en royaal worden klaargemaakt, zodat alles precies op tijd voor je klaarstaat. Tot zo in de zaak!
+        Wij regelen de sushi, jij de zorgeloze avond. Scroll verder voor jouw unieke tijdslot en vlieg zo de zaak in en uit!
       </div>
     </div>
 
-    <!-- Aanpassing 4: Sympathieprincipe — gezichten van echte mensen bouwen vertrouwen op vóór transactionele content -->
-    <div style="background: #fff; border-top: 1px solid #f0f0f0; overflow: hidden;">
-      <img src="/img/team.jpg" alt="Het team van Eddy's Sushi" style="width: 100%; display: block; height: 220px; object-fit: cover; object-position: center top;">
+    <!-- Aanpassing 4: Sympathieprincipe -->
+    <div style="background: #fff; border-top: 1px solid #f0f0f0;">
+      <img src="/img/team.jpg" alt="Het team van Eddy's Sushi" style="width: 100%; display: block; height: 122px; object-fit: cover; object-position: center 8%;">
     </div>
+
+    <!-- Chevron pijl naar bestelling -->
+    <div style="text-align: center; padding: 10px 0 4px; background: #fff;">
+      <svg width="48" height="28" viewBox="0 0 48 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: pijlBounce 1.6s ease-in-out infinite; display: inline-block;">
+        <path d="M4 4 L24 22 L44 4" stroke="#F08EB4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <style>
+        @keyframes pijlBounce {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(7px); }
+        }
+      </style>
+    </div>
+
+    <!-- ── BESTELLING + CTA wrapper met roze streep ── -->
+    <div style="position: relative;">
+      <!-- Roze lijn: recht → dan S-curve naar midden → pijl naar CTA -->
+      <div style="position: absolute; top: 43px; right: 0; width: 320px; height: 900px; pointer-events: none; z-index: 1; overflow: visible;">
+        <svg width="320" height="900" viewBox="0 0 320 900" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <!--
+            Pad: tijdslot-horizontaal → recht omlaag → ronde bocht rechts→links
+            → recht horizontaal naar midden → ronde bocht links→omlaag
+            → recht omlaag → pijl
+          -->
+          <path class="curve-lijn"
+                d="M 276,0 C 287,0 296,9 296,20
+                   L 296,668
+                   C 296,690 278,708 256,708
+                   L 60,708
+                   C 38,708 20,726 20,748
+                   L 20,756"
+                stroke="#FF6B9D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Pijl omlaag in het midden -->
+          <g class="curve-pijl">
+            <path d="M 20,756 L 11,743 M 20,756 L 29,743"
+                  stroke="#FF6B9D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          </g>
+        </svg>
+      </div>
 
     <!-- ── BESTELLING ── -->
     <div class="sectie">
@@ -661,7 +725,7 @@
         <div class="product-kaart">
           <img class="product-foto" src="/img/chicken-box.jpg" alt="Chicken Halal Box">
           <div class="product-info">
-            <div class="product-naam">Chicken Halal Box</div>
+            <div class="product-naam">Chicken Halal Box <span style="font-weight:600; color:#F08EB4; font-size:11px;">・ チキンハラルボックス</span></div>
             <div class="product-omsch">Krokante kip, malse vulling en 100% halal</div>
           </div>
           <div class="product-prijs-wrap">
@@ -674,10 +738,10 @@
         </div>
 
         <div class="product-kaart">
-          <div class="chef-badge">Populair</div>
+          <div class="chef-badge">人気 POPULAIR</div>
           <img class="product-foto" src="/img/sushi-sandwich.jpg" alt="Sushi Sandwich Mixed Fish">
           <div class="product-info">
-            <div class="product-naam">Sushi Sandwich Mixed Fish</div>
+            <div class="product-naam">Sushi Sandwich Mixed Fish <span style="font-weight:600; color:#F08EB4; font-size:11px;">・ 寿司サンド</span></div>
             <div class="product-omsch">Zachte zalm, verse tonijn en romige avocado</div>
           </div>
           <div class="product-prijs-wrap">
@@ -690,10 +754,10 @@
         </div>
 
         <div class="product-kaart">
-          <div class="chef-badge">Populair</div>
+          <div class="chef-badge">人気 POPULAIR</div>
           <img class="product-foto" src="/img/dragon-roll.jpg" alt="Dragon Roll">
           <div class="product-info">
-            <div class="product-naam">Dragon Roll</div>
+            <div class="product-naam">Dragon Roll <span style="font-weight:600; color:#F08EB4; font-size:11px;">・ ドラゴンロール</span></div>
             <div class="product-omsch">Een vullend geluksmoment met garnaal en avocado</div>
           </div>
           <div class="product-prijs-wrap">
@@ -709,7 +773,7 @@
 
       <!-- 4. Gratis extras -->
       <div class="gratis-rij">
-        <span class="gratis-lbl">Inclusief: stokjes, sojasaus &amp; wasabi</span>
+        <span class="gratis-lbl">Inclusief: stokjes, sojasaus &amp; wasabi &nbsp;·&nbsp; <span style="font-size:13px;">幸せ</span></span>
         <span class="gratis-val">Gratis</span>
       </div>
 
@@ -744,45 +808,95 @@
         <div class="level-warning">Nog maar 29 punten — je bent er bijna! Verloopt op 10 juni, wees er op tijd bij.</div>
       </div>
     </div>
+    </div><!-- /streep wrapper — eindigt hier zodat bottom:0 precies de bovenkant van Sectie 8 raakt -->
 
+    <!-- ── SECTIE 8: LIVE TRACKER CTA ── -->
+    <div style="padding: 56px 24px 32px; background: #ffffff; text-align: center; position: relative;">
 
-    <!-- ── TRACKING CTA ── -->
-    <!-- Aanpassing 2: Hick's Law — primaire sectie krijgt meer visueel gewicht via label + grotere knop -->
-    <!-- Aanpassing 1: Pijl + instructietekst verwijderd — affordance mismatch in email context -->
-    <!-- Aanpassing 5: F-patroon scanning — kortere copy = sneller begrip = hogere actiekans -->
-    <div class="tracking-sectie">
-      <div style="font-size: 11px; font-weight: 700; color: #FF6B9D; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Jouw volgende stap</div>
-      <div class="tracking-kop">Volg je geluksmoment live mee</div>
-      <div class="tracking-sub" style="font-size: 15px; color: #555; max-width: 320px; margin: 0 auto 20px; line-height: 1.6;">
-        Volg live hoe Eddy jouw rollen maakt —<br>zodat je precies op tijd vertrekt. Geen giswerk.
-      </div>
-      <!-- Aanpassing 1: Rule of Three vervangt scroll-pointer — bevestigt vertrouwen via drie korte zekerheden -->
-      <div style="font-size: 14px; color: #FF6B9D; font-style: italic; text-align: center; margin-bottom: 16px;">Geen onzekerheid. Altijd vers. Altijd op tijd.</div>
-      <a href="https://eddys-sushi-production.up.railway.app/tracking.html" class="cta-knop">
-        Volg mijn geluksmoment live
-      </a>
+      <!--[if mso]>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0;">
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+        href="https://eddys-sushi-production.up.railway.app/tracking.html"
+        style="height:48px;v-text-anchor:middle;width:320px;" arcsize="50%"
+        strokecolor="#FF6B9D" fillcolor="#FF6B9D">
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">Volg mijn geluksmoment live →</center>
+      </v:roundrect>
+      </td></tr></table>
+      <![endif]-->
+
+      <!-- Ticket/coupon card -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" aria-label="Live tracker kaart">
+        <tr>
+          <td style="background-color: #FFF0F5; border: 2px dashed #FF6B9D; border-radius: 16px; padding: 28px 24px 24px; text-align: center;">
+
+            <!-- Label + mini voortgangsbalk -->
+            <p style="margin: 0 0 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 700; color: #FF6B9D; text-transform: uppercase; letter-spacing: 1.6px;">Eddy is bezig: Stap 2 van 5</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" style="margin: 0 auto 14px; border-radius: 20px; overflow: hidden; background-color: #FFD6E7;">
+              <tr>
+                <td width="32" style="background-color: #FF6B9D; height: 6px; border-radius: 20px 0 0 20px; font-size: 0; line-height: 0;">&nbsp;</td>
+                <td width="128" style="background-color: #FFD6E7; height: 6px; border-radius: 0 20px 20px 0; font-size: 0; line-height: 0;">&nbsp;</td>
+              </tr>
+            </table>
+
+            <!-- Headline -->
+            <h2 style="margin: 0 0 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 22px; font-weight: 800; color: #1a1a1a; line-height: 1.2;">Spieken in de keuken van Eddy?</h2>
+
+            <!-- Subtext -->
+            <p style="margin: 0 0 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #555555; line-height: 1.65; max-width: 360px; margin-left: auto; margin-right: auto;">Volg elke stap van jouw geluksmoment live op je scherm.</p>
+
+            <!-- CTA Button -->
+            <!--[if !mso]><!-->
+            <a href="https://eddys-sushi-production.up.railway.app/tracking.html"
+               style="display: inline-block; background-color: #FF6B9D; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 800; text-decoration: none; padding: 14px 32px; border-radius: 99px; min-height: 48px; line-height: 20px; letter-spacing: 0.2px; box-shadow: 0 6px 20px rgba(255,107,157,0.32);">
+              Volg mijn geluksmoment live →
+            </a>
+            <!--<![endif]-->
+
+            <!-- Micro-copy -->
+            <p style="margin: 12px 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #FF6B9D; font-weight: 600;">Realtime updates vanuit de keuken</p>
+
+          </td>
+        </tr>
+      </table>
+
     </div>
 
-    <!-- ── SURPRISE & DELIGHT ── -->
-    <div class="surprise-blok" style="margin: 0 0 0; border-radius:0; border-left:none; border-right:none;">
-      <div class="sb-titel">🎁 Psst, <span>Mees</span>...</div>
-      <div class="sb-tekst">
-        Eddy heeft een kleine verrassing voor je ingepakt.<br>
-        <strong>Spot jij 'm als je je bestelling ophaalt?</strong>
-      </div>
-    </div>
+    <!-- ── SECTIE 9: PERSOONLIJKE NOOT (vrij zwevend, links uitgelijnd) ── -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+           style="background-color: #ffffff;">
+      <tr>
+        <td align="center" style="padding: 8px 44px 32px; background-color: #ffffff;">
+
+          <!-- Emoji -->
+          <p style="margin: 0 0 8px; font-size: 26px; line-height: 1; text-align: center;"><span style="color:#FF6B9D; font-size:14px; vertical-align:middle;">秘密</span> 🎁 <span style="color:#FF6B9D; font-size:14px; vertical-align:middle;">秘密</span></p>
+
+          <!-- Headline gecentreerd, roze naam -->
+          <h3 style="margin: 0 0 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 800; color: #1a1a1a; line-height: 1.3; text-align: center;">
+            Psst, <span style="color: #FF6B9D;">Mees</span>...
+          </h3>
+
+          <!-- Body copy gecentreerd -->
+          <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #666666; line-height: 1.75; text-align: center;">
+            Eddy heeft zojuist stiekem iets extra's in jouw tas gestopt.<br>
+            <strong style="color: #1a1a1a;">Hint: het maakt jouw geluksmoment nóg lekkerder!</strong>
+          </p>
+
+        </td>
+      </tr>
+    </table>
 
     <!-- ── WHATSAPP ── -->
     <!-- Aanpassing 2: Hick's Law — secundaire sectie krijgt minder visueel gewicht via grijs label + kleinere knop -->
     <div style="padding: 8px 44px 16px; text-align: center; background: #FFF0F5; border-top: 1px solid #f0f0f0;">
-      <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Hulp nodig?</div>
-      <div style="font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">Vraag of aanpassing?</div>
-      <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px;">Eddy's team reageert binnen 2 min — gewoon via WhatsApp.</div>
+      <div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Iets niet helemaal goed?</div>
+      <div style="font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">Eddy lost het op!</div>
+      <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px;">Stuur gerust een bericht en wij reageren gemiddeld al binnen 1 minuut en 43 seconden.</div>
       <a href="https://wa.me/31612345678" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #FF6B9D; color: #fff; font-size: 15px; font-weight: 800; text-decoration: none; border-radius: 99px; padding: 13px 28px; min-height: 48px; box-shadow: 0 6px 20px rgba(255,107,157,0.30); max-width: 100%;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        App Eddy's team →
+        App direct met Eddy
       </a>
-      <div style="margin-top: 10px; font-size: 11px; color: #999;">Gem. reactietijd: 1:43 · Beschikbaar tijdens openingstijden</div>
+      <div style="margin-top: 10px; font-size: 11px; color: #999;">Je ordernummer staat alvast automatisch voor je ingevuld!</div>
     </div>
 
 
@@ -793,25 +907,63 @@
 
   <!-- Subblok A: Oprichters sign-off -->
   <div style="background: #fff; border-top: 1px solid #f0f0f0; overflow: hidden; text-align: center;">
-    <div style="padding: 24px 32px 0;">
-      <img src="/img/oprichters.jpg" alt="Ferry Slijpen & Eddy Siang — Oprichters van Eddy's Sushi" style="width: 100%; display: block; height: 260px; object-fit: cover; object-position: center top; border-radius: 50%;">
+    <div style="padding: 28px 44px 0;">
+
+      <!-- Label -->
+      <p style="margin: 0 0 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: 700; color: #F08EB4; text-transform: uppercase; letter-spacing: 1.6px;">Een warme groet</p>
+
+      <!-- Kop -->
+      <h3 style="margin: 0 0 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 800; color: #1a1a1a; line-height: 1.3;">De gezichten achter jouw geluksmoment</h3>
+
+      <!-- Foto met zachte hoeken -->
+      <img src="/img/oprichters.jpg" alt="Ferry & Eddy — Oprichters van Eddy's Sushi"
+           style="width: 100%; display: block; height: 240px; object-fit: cover; object-position: center top; border-radius: 16px;">
     </div>
-    <div style="padding: 18px 24px 28px;">
-      <div style="font-size: 16px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px;">Oprichters</div>
-      <div style="font-size: 13px; color: #999; margin-bottom: 14px;">Ferry Slijpen &amp; Eddy Siang</div>
-      <div style="font-size: 15px; color: #444; font-style: italic; line-height: 1.6; max-width: 280px; margin: 0 auto;">"Wij doen er alles aan om van jouw diner een royaal verwenmoment te maken, met aandacht voor elke rol. Tot zo!"</div>
+
+    <div style="padding: 18px 44px 32px;">
+      <!-- Naam -->
+      <p style="margin: 0 0 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 800; color: #1a1a1a;">Ferry &amp; Eddy</p>
+
+      <!-- Quote -->
+      <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #444444; font-style: italic; line-height: 1.7; max-width: 360px; margin-left: auto; margin-right: auto;">"Wij doen er alles aan om van jouw bestelling een onvergetelijk geluksmoment te maken, met liefde en aandacht voor elke rol. Tot zo in de zaak!"</p>
     </div>
   </div>
 
 
   <!-- Subblok C: Merkfooter donker -->
-  <div class="peak-brand-footer">
-    <div class="pbf-logo">
-      <img src="/logo.svg" width="120" alt="Eddy's Sushi">
+  <div style="background: linear-gradient(155deg, #F08EB4 0%, #e87daa 55%, #d96899 100%); border-radius: 0 0 22px 22px; padding: 36px 44px; text-align: center;">
+
+    <!-- Logo -->
+    <div style="margin-bottom: 20px;">
+      <img src="/logo.svg" width="140" alt="Eddy's Sushi">
     </div>
-    <div class="pbf-adres">Winkelveldstraat 21, 5916 NX Venlo<br>06 13890025</div>
-    <div class="pbf-tagline">✨ Samen geluksmomentjes creëren ✨</div>
-    <a href="#" class="pbf-unsub">Uitschrijven</a>
+
+    <!-- Bedrijfsnaam -->
+    <p style="margin: 0 0 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 800; color: #ffffff;">Eddy's Sushi Venlo</p>
+
+    <!-- Adres + telefoon als links -->
+    <p style="margin: 0 0 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.9; color: rgba(255,255,255,0.85);">
+      📍 <a href="https://www.google.com/maps/search/?api=1&query=Winkelveldstraat+21+5916+NX+Venlo" style="color: rgba(255,255,255,0.85); text-decoration: underline;">Winkelveldstraat 21, 5916 NX Venlo</a><br>
+      📞 <a href="tel:+31613890025" style="color: rgba(255,255,255,0.85); text-decoration: underline;">06 13890025</a>
+    </p>
+
+    <!-- Japanse accentstrip -->
+    <p style="margin: 0 0 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; color: rgba(255,255,255,0.60); letter-spacing: 4px; text-align: center;">幸せ · 寿司 · ありがとう · 新鮮</p>
+
+    <!-- Tagline -->
+    <p style="margin: 0 0 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 700; font-style: italic; color: #ffffff; letter-spacing: 0.2px;">✨ Samen geluksmomentjes creëren ✨</p>
+
+    <!-- Social proof -->
+    <p style="margin: 0 0 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 12px; color: rgba(255,255,255,0.75);">Trots onderdeel van de Eddy's familie · Gemiddeld 4,9 op Google</p>
+
+    <!-- Uitschrijven -->
+    <p style="margin: 0 0 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 11px; color: rgba(255,255,255,0.55);">
+      Geen trek meer in Eddy's updates? <a href="#" style="color: rgba(255,255,255,0.55); text-decoration: underline;">Uitschrijven</a>
+    </p>
+
+    <!-- Japanse eindstrip -->
+    <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #ffffff; letter-spacing: 10px; text-align: center;">幸せ &nbsp;寿司&nbsp; 幸せ</p>
+
   </div>
 
   <!-- ── CHANGELOG ──

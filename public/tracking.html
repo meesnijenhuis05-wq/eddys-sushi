@@ -2,10 +2,11 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eddy's Sushi – Bestelling volgen</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    button, a { touch-action: manipulation; }
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
       background: #fff; display: flex; align-items: center; justify-content: center;
@@ -75,7 +76,7 @@
     .kn-check { width: 30px; height: 30px; border-radius: 50%; background: rgba(240,142,180,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .kn-tekst { flex: 1; }
     .kn-titel { font-size: 13px; font-weight: 700; color: #1a1a1a; }
-    .kn-desc  { font-size: 11px; color: #999; margin-top: 2px; }
+    .kn-desc  { font-size: 11px; color: #777; margin-top: 2px; }
     .kn-sluiten { width: 24px; height: 24px; border-radius: 50%; background: rgba(240,142,180,0.12); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
     /* ── Vertraging melding ── */
@@ -148,7 +149,7 @@
     .sug-icoon { width: 54px; height: 54px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .sug-tekst { flex: 1; }
     .sug-titel { font-size: 19px; font-weight: 700; color: #1a1a1a; line-height: 1.2; }
-    .sug-desc  { font-size: 12px; color: #999; margin-top: 3px; }
+    .sug-desc  { font-size: 12px; color: #777; margin-top: 3px; }
 
     /* Progress */
     .voortgang-bg { height: 8px; background: rgba(240,142,180,0.15); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
@@ -166,7 +167,7 @@
     .stap-item.voltooid .stap-bol { background: #F08EB4; border-color: #F08EB4; color: white; }
     .stap-item.actief .stap-bol { background: rgba(240,142,180,0.18); border-color: #F08EB4; animation: bolPuls 2s infinite; }
     @keyframes bolPuls { 0%,100%{ box-shadow: 0 0 0 0 rgba(240,142,180,0.6); } 50%{ box-shadow: 0 0 0 7px rgba(240,142,180,0); } }
-    .stap-label { font-size: 7px; color: rgba(0,0,0,0.28); text-align: center; line-height: 1.2; max-width: 42px; }
+    .stap-label { font-size: 9px; color: rgba(0,0,0,0.40); text-align: center; line-height: 1.2; max-width: 42px; }
     .stap-item.actief .stap-label  { color: #F08EB4; font-weight: 700; }
     .stap-item.voltooid .stap-label { color: rgba(0,0,0,0.5); }
 
@@ -227,7 +228,7 @@
     .social-proof-badge { display: flex; align-items: center; gap: 7px; background: rgba(240,142,180,0.06); border: 1px solid rgba(240,142,180,0.16); border-radius: 10px; padding: 6px 10px; margin-bottom: 10px; }
     .sp-dot { width: 7px; height: 7px; border-radius: 50%; background: #F08EB4; flex-shrink: 0; animation: spPuls 1.8s ease-in-out infinite; }
     @keyframes spPuls { 0%,100%{ opacity:1;transform:scale(1); } 50%{ opacity:0.4;transform:scale(0.82); } }
-    .sp-tekst { font-size: 10.5px; color: #999; font-weight: 500; line-height: 1.3; }
+    .sp-tekst { font-size: 10.5px; color: #777; font-weight: 500; line-height: 1.3; }
 
     /* ── Locatie knop (afhalen, fase 2) ── */
     .locatie-knop-wrap { margin-top: 20px; margin-bottom: 18px; text-align: center; display: none; }
@@ -276,6 +277,28 @@
 
     @keyframes schuifIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+
+    /* ── REDUCED MOTION (Accessibility §1) ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── FOCUS STATES (Accessibility §1 — keyboard nav) ── */
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid #F08EB4;
+      outline-offset: 2px;
+    }
+
+    /* ── TOUCH TARGET HELPERS (§2 — min 44×44px) ── */
+    .min-btn { min-width: 44px; min-height: 44px; }
+    .kn-sluiten, .vm-sluiten, .keuken-sluiten { min-width: 44px; min-height: 44px; margin: -10px; }
+    .rv-sluiten, .geniet-sluiten { min-width: 44px; min-height: 44px; }
+    .wa-knop { min-width: 44px; min-height: 44px; }
+    .tc-plus { min-width: 44px; min-height: 44px; margin: -8px; }
   </style>
 </head>
 <body>
@@ -310,12 +333,15 @@
               <div class="keuken-tekst">
                 <div class="keuken-titel">Exclusief inkijkje in onze keuken</div>
               </div>
-              <button class="keuken-sluiten" onclick="sluitKeukenNotif()">
+              <button class="keuken-sluiten" onclick="sluitKeukenNotif()" aria-label="Notificatie sluiten">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
             </div>
             <div class="keuken-sub">Kijk achter de schermen hoe onze chef jouw rollen met de hand rolt.</div>
-            <a class="keuken-btn" href="JOUW_VIDEO_URL_HIER" target="_blank">▶&nbsp;Bekijk hoe jouw sushi wordt gemaakt</a>
+            <a class="keuken-btn" href="JOUW_VIDEO_URL_HIER" target="_blank" aria-label="Bekijk hoe jouw sushi wordt gemaakt (opent video)">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M3 2 L11 6.5 L3 11 Z" fill="white"/></svg>
+              Bekijk hoe jouw sushi wordt gemaakt
+            </a>
           </div>
 
           <!-- Klaar notificatie -->
@@ -326,7 +352,7 @@
             <div class="kn-tekst">
               <div class="kn-titel">Mees, je geluksmoment staat klaar!</div>
             </div>
-            <button class="kn-sluiten" onclick="sluitKlaarNotif()">
+            <button class="kn-sluiten" onclick="sluitKlaarNotif()" aria-label="Notificatie sluiten">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
           </div>
@@ -340,16 +366,16 @@
               <div class="vm-tekst">
                 <div class="vm-titel">Mees, we willen eerlijk zijn.</div>
               </div>
-              <button class="vm-sluiten" onclick="sluitVertragingNotif()">
+              <button class="vm-sluiten" onclick="sluitVertragingNotif()" aria-label="Vertraging melding sluiten">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
             </div>
-            <div class="vm-desc">Jouw bestelling loopt iets uit, we hebben iets langer nodig om het perfect te maken.</div>
+            <div class="vm-desc">Jouw geluksmoment loopt iets uit, we hebben iets langer nodig om het perfect te maken.</div>
             <div class="vm-tijd-wrap" id="vmTijdWrap" style="display:none">
               <div class="vm-tijd-label">Nieuwe tijd</div>
               <div class="vm-tijd-waarde" id="vmTijdWaarde">–</div>
             </div>
-            <div class="vm-korting">Als excuus: 10% korting op je eerstvolgende bestelling.</div>
+            <div class="vm-korting">Als excuus: 10% korting op je eerstvolgende geluksmoment.</div>
             <div class="vm-footer">— Eddy's Sushi</div>
           </div>
 
@@ -360,7 +386,9 @@
               <div class="tc-naam" id="tcNaam">–</div>
               <div class="tc-balk-bg"><div class="tc-balk-fill" id="tcFill"></div></div>
             </div>
-            <button class="tc-plus" onclick="vergroot()">+</button>
+            <button class="tc-plus" onclick="vergroot()" aria-label="Tracking kaart uitklappen">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 2 L7 12 M2 7 L12 7" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
           </div>
 
           <!-- Volledige tracking kaart -->
@@ -387,7 +415,9 @@
                 <div class="kh-rechts">
                   <div class="kh-top">
                     <span class="afhaal-label">Afhalen</span>
-                    <button class="min-btn" onclick="verklein()">−</button>
+                    <button class="min-btn" onclick="verklein()" aria-label="Tracking kaart minimaliseren">
+                      <svg width="12" height="2" viewBox="0 0 12 2" fill="none" aria-hidden="true"><path d="M1 1 L11 1" stroke="#F08EB4" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
                   </div>
                   <div style="display:flex;align-items:center;gap:5px;">
                     <div class="afhaal-tijd" id="countdownWrap">
@@ -411,8 +441,9 @@
               </div>
 
               <div class="locatie-knop-wrap" id="locatieWrap">
-                <a class="locatie-knop" href="https://www.google.com/maps/dir/?api=1&destination=Eddy%27s+Sushi+Venlo&travelmode=driving" target="_blank">
-                  📍 Navigeer naar Eddy's Sushi
+                <a class="locatie-knop" href="https://www.google.com/maps/dir/?api=1&destination=Eddy%27s+Sushi+Venlo&travelmode=driving" target="_blank" aria-label="Navigeer naar Eddy's Sushi via Google Maps">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#F08EB4"/></svg>
+                  Navigeer naar Eddy's Sushi
                 </a>
               </div>
 
@@ -427,8 +458,8 @@
               <!-- WhatsApp -->
               <div class="whatsapp-sectie">
                 <div class="wa-label">Bij vragen? Neem gerust contact op.</div>
-                <a class="wa-knop" href="https://wa.me/31600000000?text=Hallo%20Eddy%27s%20Sushi%2C%20ik%20heb%20een%20vraag%20over%20mijn%20bestelling." target="_blank">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#F08EB4">
+                <a class="wa-knop" href="https://wa.me/31600000000?text=Hallo%20Eddy%27s%20Sushi%2C%20ik%20heb%20een%20vraag%20over%20mijn%20bestelling." target="_blank" aria-label="Stuur een WhatsApp bericht naar Eddy's Sushi">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#F08EB4" aria-hidden="true">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
                 </a>
@@ -445,7 +476,9 @@
       <!-- Review overlay (binnen het telefoonscherm) -->
       <div class="review-overlay" id="reviewOverlay">
         <div class="review-kaart">
-          <button class="rv-sluiten" onclick="sluitReview()">✕</button>
+          <button class="rv-sluiten" onclick="sluitReview()" aria-label="Review sluiten">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#888" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
           <div class="rv-logo">
             <svg width="82" height="55" viewBox="0 0 1058 707" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clip-path="url(#rc)">
@@ -499,7 +532,9 @@
       <!-- Geniet overlay (afhalen, fase 5) -->
       <div class="geniet-overlay" id="genietOverlay">
         <div class="geniet-kaart">
-          <button class="geniet-sluiten" onclick="sluitGeniet()">✕</button>
+          <button class="geniet-sluiten" onclick="sluitGeniet()" aria-label="Venster sluiten">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5 L8.5 8.5 M8.5 1.5 L1.5 8.5" stroke="#888" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
           <div class="confetti-wrap" id="confettiWrap"></div>
           <div class="geniet-content">
             <div class="geniet-titel">Yes, Mees!</div>
@@ -536,8 +571,8 @@
   const DOT_STER = `<svg viewBox="0 0 18 18" width="12" height="12" fill="none"><path d="M9 2 L10.5 6.5 L15.5 6.5 L11.5 9.5 L13 14 L9 11 L5 14 L6.5 9.5 L2.5 6.5 L7.5 6.5 Z" fill="#F08EB4"/></svg>`;
 
   const STAPPEN = [
-    { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: 'Eddy heeft jouw bestelling!',      sub: 'We gaan nu voor je aan de slag, Mees.' },
-    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: 'Eddy rolt nu jouw rollen',          sub: 'Jouw geluksmoment wordt nu gemaakt.' },
+    { icoonDot: '📋',     icoonGroot: ICOON_ONTVANGEN, kort: 'Ontvangen',    vol: "Eddy's heeft jouw geluksmoment!",  sub: 'We gaan nu voor je aan de slag, Mees.' },
+    { icoonDot: '🍣',     icoonGroot: ICOON_BEREID,    kort: 'Wordt bereid', vol: "Eddy's rolt nu jouw rollen",        sub: 'Jouw geluksmoment wordt nu gemaakt.' },
     { icoonDot: '⏰',     icoonGroot: ICOON_BIJNA,     kort: 'Bijna klaar',  vol: 'Tijd om te vertrekken!',            sub: '' },
     { icoonDot: DOT_TAS,  icoonGroot: ICOON_VERPAKT,   kort: 'Verpakt',      vol: 'Jouw geluksmoment wordt ingepakt',  sub: 'Bijna klaar om op te halen, Mees.' },
     { icoonDot: DOT_VINK, icoonGroot: ICOON_KLAAR,     kort: 'Klaar',        vol: 'Jouw geluksmoment wacht!',          sub: 'We wachten op je Mees.' },
@@ -610,7 +645,7 @@
     // Dynamische subtekst
     if (huidigStatus === 2) {
       const diffMin = Math.max(1, Math.ceil((doelTijd - new Date() + delayMinuten * 60000) / 60000));
-      document.getElementById('statusSub').textContent = `Jouw bestelling is over ${diffMin} ${diffMin === 1 ? 'minuut' : 'minuten'} klaar.`;
+      document.getElementById('statusSub').textContent = `Jouw geluksmoment is over ${diffMin} ${diffMin === 1 ? 'minuut' : 'minuten'} klaar.`;
     } else {
       document.getElementById('statusSub').textContent = stap.sub;
     }
