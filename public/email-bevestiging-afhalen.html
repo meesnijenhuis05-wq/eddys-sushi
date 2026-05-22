@@ -15,7 +15,21 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .email-wrap { max-width: 600px; margin: 0 auto; }
+    .email-wrap { max-width: 600px; margin: 0 auto; position: relative; }
+    .eddy-links {
+      position: absolute; left: -68px; top: 320px;
+      width: 100px; height: 100px;
+      transform: rotate(12deg);
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+      pointer-events: none;
+    }
+    .eddy-rechts {
+      position: absolute; right: -68px; top: 820px;
+      width: 100px; height: 100px;
+      transform: scaleX(-1) rotate(12deg);
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+      pointer-events: none;
+    }
 
     .preheader { display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f0eeec; }
 
@@ -624,6 +638,12 @@
 <div class="preheader">Eddy is gestart 🍣 Straks ruik je verse rijst, warme tempura en net gesneden zalm — jouw rolls worden nú al bereid.</div>
 
 <div class="email-wrap">
+
+  <!-- Eddy mascotte links (leunt vanuit linkerkant) -->
+  <img src="/img/eddy-mascot.svg" alt="" class="eddy-links" aria-hidden="true">
+
+  <!-- Eddy mascotte rechts (leunt vanuit rechterkant, gespiegeld) -->
+  <img src="/img/eddy-mascot.svg" alt="" class="eddy-rechts" aria-hidden="true">
 
   <!-- ── USP TOP BALK ── -->
   <div class="usp-balk">

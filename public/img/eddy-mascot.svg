@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+
+  <!-- ═══════════════════════════════════
+       Volgorde: benen → schoenen → romp →
+       armen → chopsticks → hoofd → haar →
+       muts → gezicht
+       ═══════════════════════════════════ -->
+
+  <!-- ── BENEN ── -->
+  <rect x="74"  y="158" width="22" height="26" rx="9" fill="#1a1a1a"/>
+  <rect x="76"  y="158" width="18" height="24" rx="8" fill="#2d2d2d"/>
+  <rect x="104" y="158" width="22" height="26" rx="9" fill="#1a1a1a"/>
+  <rect x="106" y="158" width="18" height="24" rx="8" fill="#2d2d2d"/>
+
+  <!-- ── SCHOENEN ── -->
+  <ellipse cx="86"  cy="185" rx="19" ry="9" fill="#1a1a1a"/>
+  <ellipse cx="114" cy="185" rx="19" ry="9" fill="#1a1a1a"/>
+
+  <!-- ── ROMP / ROZE KOKSJASJE ── -->
+  <!-- Outline -->
+  <rect x="63" y="107" width="74" height="56" rx="13" fill="#1a1a1a"/>
+  <!-- Roze jasje -->
+  <rect x="65" y="109" width="70" height="54" rx="12" fill="#FF69B4"/>
+  <!-- Witte kraag / V-hals -->
+  <path d="M100 113 L89 127 L100 133 L111 127 Z" fill="white"/>
+  <path d="M100 113 L89 127 L100 133 L111 127 Z" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- Knoopjes -->
+  <circle cx="106" cy="145" r="4.5" fill="white" stroke="#1a1a1a" stroke-width="1.8"/>
+  <circle cx="106" cy="158" r="4.5" fill="white" stroke="#1a1a1a" stroke-width="1.8"/>
+
+  <!-- ── LINKERARM ── -->
+  <!-- Outline (iets dikker = zwarte rand) -->
+  <path d="M67 120 Q43 111 25 120" stroke="#1a1a1a" stroke-width="23" fill="none" stroke-linecap="round"/>
+  <!-- Huid -->
+  <path d="M67 120 Q43 111 25 120" stroke="#FDDBB4" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <!-- Hand outline -->
+  <circle cx="23" cy="120" r="12" fill="#1a1a1a"/>
+  <!-- Hand huid -->
+  <circle cx="23" cy="120" r="10" fill="#FDDBB4"/>
+
+  <!-- ── RECHTERARM ── -->
+  <path d="M133 120 Q157 111 175 120" stroke="#1a1a1a" stroke-width="23" fill="none" stroke-linecap="round"/>
+  <path d="M133 120 Q157 111 175 120" stroke="#FDDBB4" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="177" cy="120" r="12" fill="#1a1a1a"/>
+  <circle cx="177" cy="120" r="10" fill="#FDDBB4"/>
+
+  <!-- ── CHOPSTICKS LINKS (schuin omhoog) ── -->
+  <line x1="21" y1="112" x2="37" y2="55" stroke="#5C3317" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="29" y1="113" x2="45" y2="57" stroke="#5C3317" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- ── CHOPSTICKS RECHTS (schuin omhoog) ── -->
+  <line x1="179" y1="112" x2="163" y2="55" stroke="#5C3317" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="171" y1="113" x2="155" y2="57" stroke="#5C3317" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- ── HOOFD ── -->
+  <!-- Outline -->
+  <ellipse cx="100" cy="80" rx="39" ry="37" fill="#1a1a1a"/>
+  <!-- Huid -->
+  <ellipse cx="100" cy="80" rx="37" ry="35" fill="#FDDBB4"/>
+
+  <!-- ── HAAR (zichtbaar onder muts) ── -->
+  <ellipse cx="68"  cy="64" rx="10" ry="7" fill="#1a1a1a"/>
+  <ellipse cx="132" cy="64" rx="10" ry="7" fill="#1a1a1a"/>
+
+  <!-- ── KOKSMUTS (TOQUE) ── -->
+  <!-- Klep / brim outline -->
+  <rect x="54" y="43" width="92" height="13" rx="6.5" fill="#1a1a1a"/>
+  <!-- Klep wit -->
+  <rect x="56" y="45" width="88" height="11" rx="5.5" fill="white"/>
+  <!-- Toque lichaam outline -->
+  <rect x="66" y="10"  width="68" height="37" rx="11" fill="#1a1a1a"/>
+  <!-- Toque lichaam wit -->
+  <rect x="68" y="12"  width="64" height="35" rx="10" fill="white"/>
+  <!-- Zachte glinstering bovenin muts -->
+  <ellipse cx="100" cy="19" rx="22" ry="7" fill="white" opacity="0.5"/>
+
+  <!-- ── GEZICHT ── -->
+  <!-- Linkoog (groot kawaii-oog) -->
+  <ellipse cx="88"  cy="79" rx="8"   ry="9"   fill="#1a1a1a"/>
+  <circle  cx="91.5" cy="75.5" r="3" fill="white"/>
+  <!-- Rechtoog -->
+  <ellipse cx="112" cy="79" rx="8"   ry="9"   fill="#1a1a1a"/>
+  <circle  cx="115.5" cy="75.5" r="3" fill="white"/>
+
+  <!-- Blosjes -->
+  <ellipse cx="74"  cy="90" rx="11" ry="7" fill="#FF69B4" opacity="0.42"/>
+  <ellipse cx="126" cy="90" rx="11" ry="7" fill="#FF69B4" opacity="0.42"/>
+
+  <!-- Brede, blije glimlach -->
+  <path d="M80 94 Q100 116 120 94"
+        stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+</svg>
