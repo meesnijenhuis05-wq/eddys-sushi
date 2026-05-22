@@ -15,7 +15,16 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .email-wrap { max-width: 600px; margin: 0 auto; }
+    .email-wrap { max-width: 600px; margin: 0 auto; position: relative; }
+    body { overflow-x: visible; }
+    .eddy-peek {
+      position: absolute;
+      width: 70px; height: 70px;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 14px rgba(0,0,0,0.15));
+    }
+    .eddy-peek-l { left: -38px; transform: rotate(20deg); }
+    .eddy-peek-r { right: -38px; transform: scaleX(-1) rotate(20deg); }
 
     .preheader { display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f0eeec; }
 
@@ -625,6 +634,14 @@
 
 <div class="email-wrap">
 
+  <!-- Peekaboo mascotten aan de zijkanten -->
+  <!-- Links bij Bedankt sectie (~280px) -->
+  <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" class="eddy-peek eddy-peek-l" style="top: 280px;">
+  <!-- Rechts bij Psst sectie (~980px) -->
+  <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" class="eddy-peek eddy-peek-r" style="top: 980px;">
+  <!-- Links bij footer (~1380px) -->
+  <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" class="eddy-peek eddy-peek-l" style="top: 1380px; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.15)) brightness(10);">
+
   <!-- ── USP TOP BALK ── -->
   <div class="usp-balk">
     <div class="usp-item"><strong>10.000+</strong> tevreden klanten</div>
@@ -661,12 +678,10 @@
 
     <!-- ── PERSOONLIJKE BEGROETING ── -->
     <div class="greeting-sectie">
-      <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" width="52" height="52" style="float: right; transform: rotate(15deg); filter: drop-shadow(0 3px 8px rgba(0,0,0,0.10)); margin-left: 8px;">
       <div class="greeting-naam">Bedankt voor je bestelling, <span>Mees</span>!</div>
       <div class="greeting-tekst">
         Wij regelen de sushi, jij de zorgeloze avond. Scroll verder voor jouw unieke tijdslot en vlieg zo de zaak in en uit!
       </div>
-      <div style="clear: both;"></div>
     </div>
 
     <!-- Aanpassing 4: Sympathieprincipe -->
@@ -870,11 +885,6 @@
       <tr>
         <td align="center" style="padding: 8px 44px 32px; background-color: #ffffff;">
 
-          <!-- Eddy mascotte -->
-          <div style="text-align: left; margin-bottom: -8px;">
-            <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" width="52" height="52" style="display: inline-block; transform: rotate(-12deg); filter: drop-shadow(0 3px 8px rgba(0,0,0,0.10));">
-          </div>
-
           <!-- Emoji -->
           <p style="margin: 0 0 8px; font-size: 26px; line-height: 1; text-align: center;"><span style="color:#FF6B9D; font-size:14px; vertical-align:middle;">秘密</span> 🎁 <span style="color:#FF6B9D; font-size:14px; vertical-align:middle;">秘密</span></p>
 
@@ -969,12 +979,7 @@
     </p>
 
     <!-- Japanse eindstrip -->
-    <p style="margin: 0 0 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #ffffff; letter-spacing: 10px; text-align: center;">幸せ &nbsp;寿司&nbsp; 幸せ</p>
-
-    <!-- Eddy mascotte footer -->
-    <div style="text-align: center;">
-      <img src="/img/eddy-mascot.svg" alt="" aria-hidden="true" width="58" height="58" style="display: inline-block; transform: rotate(-8deg); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18)) brightness(10);">
-    </div>
+    <p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #ffffff; letter-spacing: 10px; text-align: center;">幸せ &nbsp;寿司&nbsp; 幸せ</p>
 
   </div>
 
