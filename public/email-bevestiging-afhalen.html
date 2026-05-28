@@ -804,20 +804,80 @@
         </div>
       </div>
 
-      <!-- Cialdini #5 – Level/Punten progress card -->
-      <div style="font-size:15px; font-weight:800; color:#1a1a1a; margin-top:18px; margin-bottom:8px;">Je ontvangt bijna 1 gratis rol 🍣</div>
-      <div class="level-card">
-        <div class="level-header">
-          <span class="level-lbl">Jouw Sushi Target</span>
+      <!-- Stempelkaart – Geluksmomenten -->
+      <div style="margin-top: 18px; background: #fff; border: 1.5px solid rgba(240,142,180,0.25); border-radius: 16px; overflow: hidden;">
+
+        <!-- Badge bovenaan -->
+        <div style="text-align: center; padding: 14px 16px 0;">
+          <span style="display: inline-block; background: linear-gradient(135deg, #F08EB4, #e07aa0); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 20px; letter-spacing: 0.2px;">🎉 Nog 1 Geluksmoment te gaan!</span>
         </div>
-        <div class="level-balk-wrap">
-          <div class="level-balk-fill"></div>
+
+        <!-- Header rij -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 8px;">
+          <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 800; color: #aaa; letter-spacing: 1px; text-transform: uppercase;">Mees's Geluksmomenten</span>
+          <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 800; color: #F08EB4; background: rgba(240,142,180,0.10); border: 1px solid rgba(240,142,180,0.28); border-radius: 10px; padding: 3px 9px;">4 / 5 Geluksmomenten</span>
         </div>
-        <div class="level-punten-rij">
-          <span class="level-links">71 punten</span>
-          <span class="level-rechts">100 punten = 1 gratis rol 🍣</span>
+
+        <!-- Stempelgrid (2 rijen × 5) -->
+        <div style="padding: 4px 16px 12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <!-- Rij 1: 4 gestempeld, 1 leeg -->
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:rgba(240,142,180,0.12);border:2px solid rgba(240,142,180,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                  <img src="/img/eddy-mascot.svg" width="32" height="32" alt="" style="display:block;">
+                </div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:rgba(240,142,180,0.12);border:2px solid rgba(240,142,180,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                  <img src="/img/eddy-mascot.svg" width="32" height="32" alt="" style="display:block;">
+                </div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:rgba(240,142,180,0.12);border:2px solid rgba(240,142,180,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                  <img src="/img/eddy-mascot.svg" width="32" height="32" alt="" style="display:block;">
+                </div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:rgba(240,142,180,0.12);border:2px solid rgba(240,142,180,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                  <img src="/img/eddy-mascot.svg" width="32" height="32" alt="" style="display:block;">
+                </div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);margin:0 auto;"></div>
+              </td>
+            </tr>
+            <tr>
+              <!-- Rij 2: leeg, cadeautje, leeg, leeg, cadeautje -->
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);margin:0 auto;"></div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:20px;">🎁</div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);margin:0 auto;"></div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);margin:0 auto;"></div>
+              </td>
+              <td align="center" style="padding: 4px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:#f5f5f5;border:2px dashed rgba(240,142,180,0.40);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:20px;">🎁</div>
+              </td>
+            </tr>
+          </table>
         </div>
-        <div class="level-warning">Nog maar 29 punten — je bent er bijna! Verloopt op 10 juni, wees er op tijd bij.</div>
+
+        <!-- Tekst -->
+        <div style="padding: 0 16px 12px; text-align: center;">
+          <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #555;">🎁 Nog maar <strong style="color: #F08EB4;">1 bestelling</strong> en je gratis sushirol staat klaar!</span>
+        </div>
+
+        <!-- CTA knop -->
+        <div style="padding: 0 16px 16px;">
+          <a href="https://eddys-sushi-production.up.railway.app" style="display: block; background: linear-gradient(135deg, #F08EB4, #e07aa0); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 800; text-align: center; text-decoration: none; padding: 13px; border-radius: 12px; letter-spacing: 0.2px;">Ontdek de beloningen</a>
+        </div>
+
       </div>
     </div>
     </div><!-- /streep wrapper — eindigt hier zodat bottom:0 precies de bovenkant van Sectie 8 raakt -->
