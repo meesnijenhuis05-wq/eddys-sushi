@@ -700,24 +700,23 @@
     <!-- ── BESTELLING + CTA wrapper met roze streep ── -->
     <div style="position: relative;">
       <!-- Roze lijn: recht → dan S-curve naar midden → pijl naar CTA -->
-      <div style="position: absolute; top: 43px; right: 0; width: 320px; height: 900px; pointer-events: none; z-index: 1; overflow: visible;">
-        <svg width="320" height="900" viewBox="0 0 320 900" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+      <div style="position: absolute; top: 43px; right: 0; width: 320px; height: 1100px; pointer-events: none; z-index: 1; overflow: visible;">
+        <svg width="320" height="1100" viewBox="0 0 320 1100" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible">
           <!--
-            Pad: tijdslot-horizontaal → recht omlaag → ronde bocht rechts→links
-            → recht horizontaal naar midden → ronde bocht links→omlaag
-            → recht omlaag → pijl
+            Pad: tijdslot-horizontaal → recht omlaag langs rechterkant (buiten spaarkaart)
+            → S-bocht in witte ruimte onder spaarkaart → pijl naar Spieken-sectie
           -->
           <path class="curve-lijn"
                 d="M 276,0 C 287,0 296,9 296,20
-                   L 296,668
-                   C 296,690 278,708 256,708
-                   L 60,708
-                   C 38,708 20,726 20,748
-                   L 20,756"
+                   L 296,880
+                   C 296,902 278,920 256,920
+                   L 60,920
+                   C 38,920 20,938 20,960
+                   L 20,968"
                 stroke="#FF6B9D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
           <!-- Pijl omlaag in het midden -->
           <g class="curve-pijl">
-            <path d="M 20,756 L 11,743 M 20,756 L 29,743"
+            <path d="M 20,968 L 11,955 M 20,968 L 29,955"
                   stroke="#FF6B9D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
           </g>
         </svg>
