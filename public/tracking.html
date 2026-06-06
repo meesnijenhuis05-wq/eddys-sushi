@@ -218,6 +218,13 @@
     /* Delay badge next to time */
     .delay-badge { display: none !important; }
 
+    /* Green "klaar" state */
+    .tracking-vol.klaar-staat .voortgang-fill { background: linear-gradient(90deg, #4CAF50 0%, #a5d6a7 100%); }
+    .tracking-vol.klaar-staat .stap-item.actief .stap-bol { border-color: #4CAF50; animation: bolPulsGroen 2s infinite; }
+    .tracking-vol.klaar-staat .stap-item.actief .stap-label { color: #4CAF50; }
+    .tracking-vol.klaar-staat .at-tijd { color: #4CAF50; }
+    @keyframes bolPulsGroen { 0%,100%{ box-shadow: 0 0 0 0 rgba(76,175,80,0.6); } 50%{ box-shadow: 0 0 0 7px rgba(76,175,80,0); } }
+
     /* Orange delay state on tracking card */
     .tracking-vol.vertraagd .voortgang-fill { background: linear-gradient(90deg, #FF9800 0%, #ffcc80 100%); }
     .tracking-vol.vertraagd .stap-item.actief .stap-bol { border-color: #FF9800; animation: bolPulsOranje 2s infinite; }
@@ -867,6 +874,8 @@
       const tv = document.getElementById('trackingVol');
       if (wasVertraagd) tv.classList.add('vertraagd');
       else tv.classList.remove('vertraagd');
+      if (huidigStatus >= 4) tv.classList.add('klaar-staat');
+      else tv.classList.remove('klaar-staat');
     }
   });
 
