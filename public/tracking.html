@@ -590,6 +590,7 @@
   let isGeminimaliseerd = false;
   let gekozenSterren = 0;
   let delayMinuten = 0;
+  let wasVertraagd = false;
   let reviewSluitTimer = null;
 
   function genereerCode() {
@@ -765,6 +766,7 @@
     document.getElementById('vertragingMelding').classList.add('zichtbaar');
     triggerTriling();
     if (isGeminimaliseerd) vergroot();
+    wasVertraagd = true;
     document.getElementById('trackingVol').classList.add('vertraagd');
     updateScherm();
   }
@@ -855,13 +857,13 @@
     if (order.status !== huidigStatus) {
       document.getElementById('vertragingMelding').classList.remove('zichtbaar');
       document.getElementById('klaarNotif').classList.remove('zichtbaar');
-      document.getElementById('trackingVol').classList.remove('vertraagd');
       document.getElementById('vmTijdWrap').style.display = 'none';
       const badge = document.getElementById('delayBadge');
       badge.style.display = 'none';
       delayMinuten = 0;
       huidigStatus = order.status;
       updateScherm();
+      if (wasVertraagd) document.getElementById('trackingVol').classList.add('vertraagd');
     }
   });
 
