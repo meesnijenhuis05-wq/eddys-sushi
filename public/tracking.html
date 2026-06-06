@@ -864,7 +864,9 @@
       huidigStatus = order.status;
       if (wasVertraagd && huidigStatus >= 4) wasVertraagd = false;
       updateScherm();
-      if (wasVertraagd) document.getElementById('trackingVol').classList.add('vertraagd');
+      const tv = document.getElementById('trackingVol');
+      if (wasVertraagd) tv.classList.add('vertraagd');
+      else tv.classList.remove('vertraagd');
     }
   });
 
